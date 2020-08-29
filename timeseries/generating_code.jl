@@ -123,3 +123,21 @@ ds = Systems.towel()
 tr = trajectory(ds, 10000; Ttr = 100)
 
 writedlm("6.csv", tr)
+
+# %% 7 = Non-stationary dynamics
+ds = Systems.logistic()
+rs = 3.60:0.0001:3.9
+integ = integrator(ds, π/4)
+x = [integ.u]; sizehint!(x, length(rs)*3)
+
+for r in rs
+    set_parameter!(ds, 1, r)
+    for i in 1:3
+        DynamicalSystems.step!(integ)
+        push!(x, integ.u)
+    end
+end
+
+x .+= 0.05randn(length(x))
+
+writedlm("7.csv", x)
