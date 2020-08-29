@@ -124,7 +124,7 @@ tr = trajectory(ds, 10000; Ttr = 100)
 
 writedlm("6.csv", tr)
 
-# %% 7 = Non-stationary dynamics
+# %% 7 = Non-stationary dynamics of logistic map
 ds = Systems.logistic()
 rs = 3.60:0.0001:3.9
 integ = integrator(ds, π/4)
@@ -141,3 +141,17 @@ end
 x .+= 0.05randn(length(x))
 
 writedlm("7.csv", x)
+
+# %% oscillatory ARMA, embedded in 4d
+using ARFIMA, Random
+
+rng = MersenneTwister(5132786517)
+x = arma(rng, 10000, 0.4, SVector(1.624, -0.284, -0.355), SVector(-0.96))
+τ = estimate_delay(x, "mi_min")
+e = embed(x, 4, τ)
+
+# This looks awesome!
+# using3D()
+# cols = columns(e)
+# scatter3D(cols[1], cols[2], cols[3]; c = cols[4])
+writedlm("8.csv", x)
