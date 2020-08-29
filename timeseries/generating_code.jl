@@ -114,3 +114,12 @@ using Statistics, FFTW
 # end
 
 writedlm("5.csv", hcat(xs...))
+
+# %% 6 = towel map trajectory
+using DynamicalSystems, DelimitedFiles
+
+ds = Systems.towel()
+
+tr = trajectory(ds, 10000; Ttr = 100)
+
+writedlm("6.csv", tr)
