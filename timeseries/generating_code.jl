@@ -142,7 +142,7 @@ x .+= 0.05randn(length(x))
 
 writedlm("7.csv", x)
 
-# %% oscillatory ARMA, embedded in 4d
+# %% 8 = oscillatory ARMA, embedded in 4d
 using ARFIMA, Random
 
 rng = MersenneTwister(5132786517)
@@ -155,3 +155,44 @@ e = embed(x, 4, τ)
 # cols = columns(e)
 # scatter3D(cols[1], cols[2], cols[3]; c = cols[4])
 writedlm("8.csv", x)
+
+# %% 9 = 6dimensional Lorenz96 with 2% AR noise - Periodic or Quasiperiodic (don't know!)
+using DynamicalSystems
+D = 6
+u = fill(0.1, D)
+u[1] = 0.2
+u[3] = 0.3
+lo = Systems.lorenz96(D, u; F = 5.5)
+
+tr = regularize(trajectory(lo, 100.0; Ttr = 10.0))
+co = columns(tr)
+for x in co
+    noise = 0.02randn(length(x))
+    noise = arma(length(x), 0.4, SVector(0.624, -0.284, -0.355, +0.355))
+    noise ./= std(noise) / (0.02)
+    x .+= noise
+end
+
+writedlm("9.csv", hcat(co...))
+
+# scatter3D(co[1], co[2], co[3]; c = co[4])
+
+# %% 10 = 5dimensional Lorenz96 with 2% AR noise - Chaotic trajectory
+using DynamicalSystems
+D = 5
+u = fill(0.1, D)
+u[1] = 0.2
+u[3] = 0.3
+lo = Systems.lorenz96(D, u; F = 8.0)
+
+tr = regularize(trajectory(lo, 100.0; Ttr = 10.0))
+co = columns(tr)
+for x in co
+    noise = 0.02randn(length(x))
+    noise = arma(length(x), 0.4, SVector(0.624, -0.284, -0.355, +0.355))
+    noise ./= std(noise) / (0.02)
+    x .+= noise
+end
+
+# scatter3D(co[1], co[2], co[3]; c = co[4])
+writedlm("10.csv", hcat(co...))
