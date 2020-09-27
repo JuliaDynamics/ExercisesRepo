@@ -5,7 +5,11 @@ history
 submission
 stuff
 *.pdf
-
+todo
+courses
+*.pptx
+# Will reenable manifest later
+Manifest.toml
 
 ################################################################################
 #                          DrWatson Project Structure                          #
