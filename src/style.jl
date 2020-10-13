@@ -1,3 +1,4 @@
+include("colorscheme.jl")
 using PyPlot
 using3D()
 
@@ -48,10 +49,7 @@ function Base.getindex(c::CyclicContainer)
     c.n += 1
     c[c.n]
 end
-COLORS = CyclicContainer(
-["#233B43", "#499cbf", "#E84646",
- "#168e32","#C29365", "#985CC9",
- "#8f8f8f"])
+COLORS = CyclicContainer(COLORSCHEME)
 MARKERS = CyclicContainer(["o", "s", "^", "p", "P", "D", "X"])
 LINES = CyclicContainer([ ":", "-", "--", "-."])
 # Also set default color cycle

@@ -1,10 +1,17 @@
 name = "ExercisesRepo"
 
 [deps]
+AbstractPlotting = "537997a7-5e4e-5d89-9595-2241ea00577e"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
+DynamicalBilliards = "4986ee89-4ee5-5cef-b6b8-e49ba721d7a5"
 DynamicalSystems = "61744808-ddfa-5f27-97ff-6e42cc95d634"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+Roots = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
 
 [compat]
-julia = "1.5.1"
+julia = "1.5"

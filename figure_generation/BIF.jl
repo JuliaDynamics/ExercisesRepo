@@ -1,4 +1,6 @@
-include("style.jl")
+using DrWatson
+@quickactivate "ExercisesRepo"
+include(srcdir("style.jl"))
 
 # %% 1d climate
 using DynamicalSystems, PyPlot, Roots, ForwardDiff
@@ -38,7 +40,7 @@ fig.subplots_adjust(left = 0.18, bottom = 0.2, top = 0.97)
 # %% Period doubling
 using DynamicalSystems, PyPlot
 
-fig = figure(figsize = (figx, 1.1figx))
+fig = figure(figsize = (figx, 1.2figx))
 axlo = fig.add_subplot(3, 1, 1)
 axro = fig.add_subplot(3, 1, 3)
 
@@ -134,7 +136,7 @@ axro.set_yticks(3:3:9)
 axro.text(1.7, 7, "Rössler system", size = 36)
 fig.tight_layout()
 fig.subplots_adjust(bottom = 0.1, top = 0.97, left = 0.09, hspace = 0.3, wspace = 0.1, right = 0.98)
-# fsave(joinpath(figdir, "orbit_diagrams"), fig; pdf = false, dpi = 600)
+# fsave(plotsdir("orbit_diagrams"), fig)
 
 # %% # Testing how orbit diagram of quasiperiodic looks like
 using DynamicalSystems, PyPlot
