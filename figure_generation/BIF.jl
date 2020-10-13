@@ -166,6 +166,54 @@ for j in 1:L
 end
 ax.plot(x, y, ls = "None", ms = 0.5, color = "black", marker = "o", alpha = 0.02)
 
+# %% Roessler trajectory -> PSOS -> Lorenz map
+using InteractiveChaos
+using DynamicalSystems, Makie
+using AbstractPlotting.MakieLayout
+
+
+N = 10000.0
+
+ds = Systems.roessler()
+tr = trajectory(ds, N; Ttr = 100.0)
+
+scene, layout = layoutscene(resolution = (1500, 500), )
+display(scene)
+
+# Plot trajectory
+
+trplot = layout[1,1] = LScene(scene, scenekw = (camera = cam3d!, raw = false))
+lines!(trplot, columns(tr)...; color = COLORSCHEME[1], linewidth = 2.0)
+
+# Plot plane and section
+
+o = Point3f0(-10, 0, 0)
+w = Point3f0(25, 0, 25)
+p = FRect3D(o, w)
+a = RGBAf0(0,0,0,0)
+c = to_color(COLORSCHEME[2])
+img = AbstractPlotting.ImagePattern([c a; a c]); # This throws an error if it shows, you can ignore that
+mesh!(trplot, p; color = img)
+
+psos = poincaresos(ds, (2, 0.0), N; Ttr = 100.0)
+scatter!(trplot, columns(psos)...; color = COLORSCHEME[3], markersize = 500)
+
+# Plot section separately
+psplot = layout[1, 2] = LAxis(scene)
+scatter!(psplot, psos[:, 1], psos[:, 3]; color = COLORSCHEME[3])
+psplot.xlabel = "xₙ"
+psplot.ylabel = "zₙ"
+
+# Plot lorenz map
+loplot = layout[1, 3] = LAxis(scene)
+scatter!(loplot, psos[1:end-1, 3], psos[2:end, 3]; color = COLORSCHEME[3])
+loplot.xlabel = "zₙ"
+loplot.ylabel = "zₙ₊₁"
+
+display(scene)
+
+Makie.save(plotsdir("roessler_map.png"), scene)
+
 # %% Bifurcation kit code
 # Better check https://rveltz.github.io/BifurcationKit.jl/dev/iterator/#
 using BifurcationKit, SparseArrays, LinearAlgebra
