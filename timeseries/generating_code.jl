@@ -1,3 +1,5 @@
+using DrWatson
+@quickactivate "ExercisesRepo"
 using DelimitedFiles
 cd(@__DIR__)
 
@@ -44,7 +46,7 @@ tr = trajectory(ro, 1250; dt = 0.2, Ttr = 100)
 writedlm("4.csv", tr)
 
 # %% 5 = collection of periodic and quasiperiodic orbits
-# First part from Henon Heiles
+# some from Henon Heiles
 using DynamicalSystems, OrdinaryDiffEq, PyPlot, DelimitedFiles
 diffeq = (alg = Vern9(), reltol = 1e-9, abstol = 1e-9)
 hh = Systems.henonheiles()
@@ -69,17 +71,17 @@ x = regularize(tr[:, 1])
 x .+= 0.05randn(length(x))
 push!(xs, x)
 
-# Second part is chaotic & period-4 roessler
-ro = Systems.roessler()
+# chaotic & period-4 roessler
+ro = Systems.roessler(ones(3))
 for c in (4.0, 5.7)
     set_parameter!(ro, 3, c)
-    tr = trajectory(ro, 500.0; Ttr = 100, dt = 0.1, diffeq...)
+    tr = trajectory(ro, 500.0; Ttr = 1000, dt = 0.1, diffeq...)
     x = regularize(tr[:, 1])
     x .+= 0.05randn(length(x))
     push!(xs, x)
 end
 
-# Third part from standard map
+# from standard map (quasiperiod around period 3)
 sm = Systems.standardmap()
 
 for (i, u) in enumerate((
@@ -88,7 +90,7 @@ for (i, u) in enumerate((
     ))
     tr = trajectory(sm, 5000, u; Ttr = 10)
     x = regularize(tr[:, 1])
-    i == 1 && (x .+= 0.05randn(length(x)))
+    i == 1 && (x .+= 0.02randn(length(x)))
     push!(xs, x)
 end
 
@@ -104,14 +106,12 @@ x = s[end-5000:end]
 x ./= std(x)
 push!(xs, x)
 
-using Statistics, FFTW
-# for x in xs
-#     plot(x[1:1000], alpha = 0.5)
-#     r = x
-#     P = abs2.(rfft(r .- mean(r)))
-#     f = FFTW.rfftfreq(length(r))
-#     plot(f, P)
-# end
+# Last part 3 cosines, to confuse for periodic → quasiperiodic
+t = range(0, 100π; length = 5001)
+x = @. cos(t) + 0.5cos(2t + π/3) + 0.2cos(13t + π/5)
+x ./= std(x)
+x .+= 0.05randn(length(x))
+push!(xs, x)
 
 writedlm("5.csv", hcat(xs...))
 
