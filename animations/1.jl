@@ -5,7 +5,8 @@ include(srcdir("colorscheme.jl"))
 
 # Animate evolution of trajectories in Lorenz
 using InteractiveChaos
-using DynamicalSystems, Makie
+using DynamicalSystems
+using Makie
 using OrdinaryDiffEq
 
 ds = Systems.lorenz()

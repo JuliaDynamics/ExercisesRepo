@@ -177,7 +177,7 @@ N = 10000.0
 ds = Systems.roessler()
 tr = trajectory(ds, N; Ttr = 100.0)
 
-scene, layout = layoutscene(resolution = (1500, 500), )
+scene, layout = layoutscene(resolution = (2100, 700), )
 display(scene)
 
 # Plot trajectory
@@ -185,8 +185,14 @@ display(scene)
 trplot = layout[1,1] = LScene(scene, scenekw = (camera = cam3d!, raw = false))
 lines!(trplot, columns(tr)...; color = COLORSCHEME[1], linewidth = 2.0)
 
-# Plot plane and section
+# Adjust ticks and sizes of 3D plot
+xticks!(trplot.scene; xtickrange = [-10, 0, 10], xticklabels = string.([-10, 0, 10]))
+yticks!(trplot.scene; ytickrange = [-10, 0, 10], yticklabels = string.([-10, 0, 10]))
+zticks!(trplot.scene; ztickrange = [5, 15, 25], zticklabels = string.([5, 15, 25]))
+trplot.scene[Axis][:ticks][:textsize] = (15, 15, 15)
+trplot.scene[Axis][:names][:textsize] = (20,20,20)
 
+# Plot plane and section
 o = Point3f0(-10, 0, 0)
 w = Point3f0(25, 0, 25)
 p = FRect3D(o, w)
@@ -204,15 +210,26 @@ scatter!(psplot, psos[:, 1], psos[:, 3]; color = COLORSCHEME[3])
 psplot.xlabel = "xₙ"
 psplot.ylabel = "zₙ"
 
+LS = 50
+TS = 40
+
+psplot.xticklabelsize = TS
+psplot.yticklabelsize = TS
+psplot.xlabelsize = LS
+psplot.ylabelsize = LS
+
 # Plot lorenz map
 loplot = layout[1, 3] = LAxis(scene)
 scatter!(loplot, psos[1:end-1, 3], psos[2:end, 3]; color = COLORSCHEME[3])
 loplot.xlabel = "zₙ"
 loplot.ylabel = "zₙ₊₁"
-
+loplot.xticklabelsize = TS
+loplot.yticklabelsize = TS
+loplot.xlabelsize = LS
+loplot.ylabelsize = LS
 display(scene)
 
-Makie.save(plotsdir("roessler_map.png"), scene)
+# Makie.save(plotsdir("roessler_map.png"), scene)
 
 # %% Bifurcation kit code
 # Better check https://rveltz.github.io/BifurcationKit.jl/dev/iterator/#
@@ -278,3 +295,47 @@ tight_layout()
 
 fig.subplots_adjust(left = 0.18, bottom = 0.2, top = 0.97)
 # fsave(joinpath(figdir, "bif_example"), fig)
+
+
+# %% Intermittency in Roessler
+using DynamicalSystems, PyPlot
+
+
+axro = (figure(); gca())
+ro = Systems.roessler()
+pvalues = range(4., stop = 8.18, length = 2001)
+i = 1
+plane = (2, 0.0)
+tf = 4000.0
+p_index = 3
+output = produce_orbitdiagram(ro, plane, i, p_index, pvalues;
+                              tfinal = tf, Ttr = 2000.0)
+
+for (j, p) in enumerate(pvalues)
+    axro.plot(fill(p, length(output[j])), output[j], lw = 0,
+    marker = "o", ms = 0.2, color = "black", alpha = 0.1)
+end
+axro.set_xlim(pvalues[1], pvalues[end]);
+
+
+# %%
+ro = Systems.roessler(ones(3))
+cc = 5.187
+
+cs = range(5.187; step = -0.002, length = 3)
+
+fig, axs = subplots(length(cs), 1; sharex = true)
+T = 3000
+dt = 0.05
+for i in 1:length(cs)
+	set_parameter!(ro, 3, cs[i])
+	tr = trajectory(ro, T; Ttr = 200.0, dt)
+	axs[i].plot(0:dt:T, tr[:, 1], lw = 0.5)
+	axs[i].set_yticks([])
+	axs[i].text(1.02, 0.5, "\$c=$(cs[i])\$"; bbox = bbox,
+	transform = axs[i].transAxes, va = :center)
+end
+axs[1].set_xlim(0, T)
+fig.tight_layout()
+fig.subplots_adjust(hspace = 0.1, bottom = 0.1)
+# fsave(plotsdir("intermittency"), fig)
