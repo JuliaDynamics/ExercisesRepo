@@ -2,6 +2,8 @@ name = "ExercisesRepo"
 
 [deps]
 AbstractPlotting = "537997a7-5e4e-5d89-9595-2241ea00577e"
+ChaosTools = "608a59af-f2a3-5ad4-90b4-758bdf3122a7"
+DelayEmbeddings = "5732040d-69e3-5649-938a-b6b4f237613f"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
 DynamicalBilliards = "4986ee89-4ee5-5cef-b6b8-e49ba721d7a5"
@@ -15,4 +17,6 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Roots = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
 
 [compat]
+ChaosTools = "1.18"
+DrWatson = "1.16"
 julia = "1.5"

@@ -36,23 +36,7 @@ if false # test font
     xlabel("x label"); ylabel("\$H_2\$"); legend(); tight_layout()
 end
 
-mutable struct CyclicContainer
-    c::Vector
-    n::Int
-end
-CyclicContainer(c) = CyclicContainer(c, 0)
-
-Base.length(c::CyclicContainer) = length(c.c)
-Base.iterate(c::CyclicContainer, state=1) = Base.iterate(c.c, state)
-Base.getindex(c::CyclicContainer, i) = c.c[(i-1)%length(c.c) + 1]
-function Base.getindex(c::CyclicContainer)
-    c.n += 1
-    c[c.n]
-end
-COLORS = CyclicContainer(COLORSCHEME)
-MARKERS = CyclicContainer(["o", "s", "^", "p", "P", "D", "X"])
-LINES = CyclicContainer([ ":", "-", "--", "-."])
-# Also set default color cycle
+# set default color cycle
 PyPlot.rc("axes", prop_cycle = matplotlib.cycler(color=COLORS.c))
 
 if false

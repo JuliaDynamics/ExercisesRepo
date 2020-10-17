@@ -7,6 +7,7 @@ stuff
 *.pdf
 todo
 courses
+lectures
 *.pptx
 # Will reenable manifest later
 Manifest.toml
