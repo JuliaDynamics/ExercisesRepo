@@ -289,10 +289,9 @@ ax.plot([resp[i1], resp[i2]], [resx[i1], resx[i2]], ls = "None",
 
 # PyPlot.plot(resp, resx)
 ax.legend(markerscale = 3)
-xlabel("\$\\epsilon\$")
-ylabel("\$T^*\$")
-tight_layout()
-
+ax.set_xlabel("\$\\epsilon\$")
+ax.set_ylabel("\$T^*\$")
+fig.tight_layout()
 fig.subplots_adjust(left = 0.18, bottom = 0.2, top = 0.97)
 # fsave(joinpath(figdir, "bif_example"), fig)
 
