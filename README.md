@@ -40,3 +40,5 @@ which ensures that only local directories will be used, as well as the *exact* p
 
 ## Exercise datasets
 The datasets that are used in the book exercises are contained in the `timeseries` folder, all being in the same text-based format. The same folder contains information of where this data is coming from: `data_explanations.md`. Some data are generated from simulations in the script `generating_code.jl`.
+
+## Multiple choice questions
