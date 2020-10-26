@@ -1,4 +1,10 @@
-# ExercisesRepo
+Some info lalala.
+
+**Contents**
+- [Installation and reproducibility](#installation-and-reproducibility)
+- [Exercise datasets](#exercise-datasets)
+
+## Installation and reproducibility
 
 This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
 to make a reproducible scientific project named
@@ -31,3 +37,6 @@ using DrWatson
 @quickactivate "ExercisesRepo"
 ```
 which ensures that only local directories will be used, as well as the *exact* package versions contained within the repository, leading to full reproducibility.
+
+## Exercise datasets
+The datasets that are used in the book exercises are contained in the `timeseries` folder, all being in the same text-based format. The same folder contains information of where this data is coming from: `data_explanations.md`. Some data are generated from simulations in the script `generating_code.jl`.
