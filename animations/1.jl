@@ -1,4 +1,3 @@
-# Animations and extra plots used in chapter 1
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
@@ -23,10 +22,6 @@ main.ylabel = "p"
 # %% Lorenz system trajectories
 ds = Systems.lorenz()
 
-u1 = [10,20,40.0]
-u2 = [10,20,40.0 + 1e-3]
-u3 = [20,10,40.0]
-u0s = [u1, u2, u3]
 u0s =  [[10,20,40.0] .+ rand(3) for _ in 1:7]
 
 diffeq = (alg = Tsit5(), dtmax = 0.01)
