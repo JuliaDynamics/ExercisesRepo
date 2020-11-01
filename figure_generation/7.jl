@@ -1,4 +1,7 @@
-include("style.jl")
+using DrWatson
+@quickactivate "ExercisesRepo"
+include(srcdir("style.jl"))
+using DynamicalSystems, PyPlot, Random
 
 # %% mutual information
 using DynamicalSystems, PyPlot

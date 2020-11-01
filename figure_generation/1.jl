@@ -1,5 +1,7 @@
+using DrWatson
+@quickactivate "ExercisesRepo"
+include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot, Random
-include("style.jl")
 
 # %% phase space plots
 close("all")

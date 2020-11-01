@@ -1,5 +1,7 @@
-using DynamicalSystems, PyPlot
-include("style.jl")
+using DrWatson
+@quickactivate "ExercisesRepo"
+include(srcdir("style.jl"))
+using DynamicalSystems, PyPlot, Random
 
 # %% permutation entropy
 using Random, Combinatorics, Statistics

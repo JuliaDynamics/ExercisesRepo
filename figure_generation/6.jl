@@ -1,5 +1,7 @@
-using DynamicalSystems, PyPlot
-include("style.jl")
+using DrWatson
+@quickactivate "ExercisesRepo"
+include(srcdir("style.jl"))
+using DynamicalSystems, PyPlot, Random
 
 # %% showing embedding
 lo = Systems.lorenz([0, 10, 0.0])

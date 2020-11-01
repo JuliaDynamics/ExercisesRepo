@@ -1,6 +1,7 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("style.jl"))
+using DynamicalSystems, PyPlot, Random
 
 # %% 1d climate
 using DynamicalSystems, PyPlot, Roots
@@ -180,7 +181,7 @@ fig, axs = subplots(3, 1; figsize = (figx/2.5, figx/2.4), sharex = true)
 for (i, u) in enumerate(u0s)
    # r = trajectory(hh, 1000.0, u; dt = 0.1)[:, 1]
     r = trajectory(hh, 30000.0, u; dt = δt)[:, 1]
-    P = abs.(rfft(r .- mean(r)))
+    P = abs2.(rfft(r .- mean(r)))
     P[1] = P[2]
     ν = rfftfreq(length(r))/δt
     # axs[i].plot(ν, P ./ maximum(P),
@@ -195,7 +196,7 @@ for (i, u) in enumerate(u0s)
     # lw = 1.0, alpha = 0.5, color = "C$(i-1)")
     # PyPlot.plot(r)
     axs[i].set_yticks([])
-    axs[i].set_ylim(0.002, 1.0)
+    axs[i].set_ylim(10.0^(-6), 1.0)
     axs[i].set_xlim(0, 0.4)
 end
 axs[2].set_ylabel("Fourier spectrum")
@@ -203,3 +204,152 @@ axs[3].set_xlabel("frequency \$\\nu\$")
 fig.tight_layout()
 fig.subplots_adjust(bottom = 0.16, left = 0.09, top = 0.98, right = 0.93, hspace = 0.1)
 fsave(plotsdir("spectra"), fig)
+
+# %% fitzhugh new
+fig, axs = subplots(2,3; figsize = (figx, 2figy))
+fig.tight_layout()
+
+a = 3.
+b = 0.2
+ε = 0.01
+I = 0.0
+
+# ds = Systems.fitzhugh_nagumo_new(; a, b, ε, I )
+ds = Systems.fitzhugh_nagumo([0,0.0]; a, b, ε, I )
+
+xgrid = -0.3:0.02:1.1
+ygrid = -0.1:0.01:0.4
+
+function add_nullclines!(ax, a, b, ε, I)
+    u = -0.3:0.01:1.1
+    w1 = @. u
+    w2 = @. a*u*(u-b)*(1-u) + I
+    ax.plot(u, w1, "--", color = "C3")
+    ax.plot(u, w2, ":", color = "C4")
+    ax.set_ylim(ygrid[1], ygrid[end])    # why is this necessary?
+end
+
+function add_streamlines!(ax, a, b, ε, I)
+    ux = zeros(length(xgrid), length(ygrid))
+    uy = copy(ux)
+    set_parameter!(ds, [a, b, ε, I])
+    for (i, x) in enumerate(xgrid)
+        for (j, y) in enumerate(ygrid)
+            ux[i, j], uy[i, j] = ds.f(SVector(x, y), ds.p, 0)
+        end
+    end
+    ax.streamplot(Vector(xgrid), Vector(ygrid), ux', uy'; linewidth = 0.5, density = 0.5, color = "C7")
+    ax.set_ylim(ygrid[1], ygrid[end])
+end
+
+# Fig A (top left)
+# ================
+ax = axs[1]
+add_nullclines!(ax, a, b, ε, I)
+add_streamlines!(ax, a, b, ε, I)
+
+# Add tex to axs [1] explaining nullclines
+sss = 20
+props = Dict(:boxstyle=>"round", :alpha=>1., :facecolor => "white")
+ax.text(0.5, 0.35, "\$\\dot{w}>0\$", color = "C3", size = sss, bbox=props)
+ax.text(-0.1, 0.35, "\$\\dot{w}<0\$", color = "C3", size = sss, bbox=props)
+ax.text(0, 0.1, "\$\\dot{u}<0\$", color = "C4", size = sss, bbox=props)
+ax.text(0.45, -0.05, "\$\\dot{u}>0\$", color = "C4", size = sss, bbox=props)
+ax.set_ylabel("\$w\$")
+ax.set_xlabel("\$u\$")
+
+
+# Fig B & C: two trajectries & zoomin
+# ==================
+for ax in (axs[3], axs[5])
+    add_nullclines!(ax, a, b, ε, I)
+
+    u1 = [0.19, 0.]
+    tr1 = trajectory(ds, 200.0, u1)
+    ax.plot(columns(tr1)...; color = "C2", lw = 1.5)
+    ax.scatter(tr1[1]...; color = "C2", s = 20)
+
+    u2 = [0.21, 0.]
+    tr2 = trajectory(ds, 300.0, u2)
+    ax.plot(columns(tr2)...; color = "C1", lw = 1.5)
+    ax.scatter(tr2[1]...; color = "C1", s = 20)
+
+    # ic = (tr1[1] + tr2[1]) ./ 2
+    # ax.scatter(ic...; color = "k", s = 10)
+
+    ax.plot(0, 0; marker = "o", mec = "C0", mew = 1,
+        markersize = 6, mfc = "w", zorder = 99)
+    ax.axhline(0; color = "k", lw = 0.5, zorder = 1)
+end
+axs[3].set_ylabel("\$w\$")
+axs[3].set_xlabel("\$u\$")
+
+zbox = ((-0.05, -0.04), (0.25, 0.04))
+axis_zoomin!(axs[5],axs[3],  zbox, zbox, "C0"; lw = 1.0)
+axs[5].set_xlim(zbox[1][1], zbox[2][1])
+axs[5].set_ylim(zbox[1][2], zbox[2][2])
+axs[5].set_xticks([])
+axs[5].set_yticks([])
+
+# Fig D: timeseries, pulses, refractory period
+using OrdinaryDiffEq
+tstops = [20, 80, 170] # callback times
+
+condition(u,t,integ) = t ∈ tstops # pulse times
+function affect!(integ)
+    integ.u = SVector(integ.u[1] + 0.25, integ.u[2])
+end
+cb = DiscreteCallback(condition, affect!)
+
+Tf = 250.0
+dt = 0.1
+prob = ODEProblem(ds, (0.0, Tf))
+sol = solve(prob, Tsit5(); callback=cb, tstops = tstops, dtmax = 0.01, maxiter = typemax(Int))
+
+axs[2].plot(sol.t, sol[1, :])
+axs[2].set_xlabel("\$t\$")
+axs[2].set_ylabel("\$u\$")
+
+# Fig E: multi stable
+a = 8.
+b = 0.2
+ε = 0.01
+I = 0.
+
+xgrid = -0.3:0.02:1.1
+ygrid = -0.2:0.01:1
+
+add_nullclines!(axs[4], a, b, ε, I)
+set_parameter!(ds, [a,b,ε,I])
+ax = axs[4]
+
+u1 = [0.3, 0.]
+tr1 = trajectory(ds, 300.0, u1)
+ax.plot(columns(tr1)...; color = "C2")
+ax.scatter(tr1[1]...; color = "C2", s = 20)
+
+u2 = [0.55, 0.8]
+tr2 = trajectory(ds, 300.0, u2)
+ax.plot(columns(tr2)...; color = "C1")
+ax.scatter(tr2[1]...; color = "C1", s = 20)
+
+ax.set_ylabel("\$w\$")
+ax.set_xlabel("\$u\$")
+
+# Fig F: limit cycle
+# -------------------------
+ax = axs[6]
+a = 3.
+b = -0.05
+ε = 0.01
+I = 0.
+set_parameter!(ds, [a,b,ε,I])
+add_nullclines!(ax, a, b, ε, I)
+
+tr = trajectory(ds, 400.0, u)
+ax.plot(columns(tr)...; color = "C2")
+ax.scatter(tr[1]...; color = "C2", s = 20)
+ax.set_xlim(-0.5,1.1)
+ax.set_ylim(-0.1,0.6)
+ax.set_ylabel("\$w\$")
+ax.set_xlabel("\$u\$")

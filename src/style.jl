@@ -25,21 +25,20 @@ for z in ("x", "y")
     PyPlot.rc("$(z)tick.minor", size = 3, visible = false)
 end
 
-const figx = 16 # width correspoding to full text width
-# default figure size is a 1x3 grid:
-PyPlot.rc("figure", figsize = (figx, figx/3))
+figx = 16 # default width correspoding to full text width
+figy = 5  # default height corresponding to 1 row of plots
+PyPlot.rc("figure", figsize = (figx, figy))
 PyPlot.rc("savefig", dpi = 600, transparent = true, format = "png")
-const figdir = joinpath(@__DIR__, "../figures/")
+
+# set default color cycle
+PyPlot.rc("axes", prop_cycle = matplotlib.cycler(color=COLORS.c))
 
 if false # test font
     figure(figsize=(10,8)); plot(rand(10), label = "\$a=\\int_0^\\infty xdx\$")
     xlabel("x label"); ylabel("\$H_2\$"); legend(); tight_layout()
 end
 
-# set default color cycle
-PyPlot.rc("axes", prop_cycle = matplotlib.cycler(color=COLORS.c))
-
-if false
+if false # test color scheme
     figure(figsize = (20, 10)) # show colors
     ax1 = subplot(131)
     ax2 = subplot(132)
