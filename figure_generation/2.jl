@@ -174,7 +174,7 @@ labels = (
 )
 
 hh = Systems.henonheiles()
-fig, axs = subplots(3, 1; figsize = (figx/2.5, figx/2.4), sharex = true)
+fig, axs = subplots(3, 1; figsize = (figx/2, 2figy), sharex = true)
 
 δt = 0.05
 
@@ -186,7 +186,7 @@ for (i, u) in enumerate(u0s)
     ν = rfftfreq(length(r))/δt
     # axs[i].plot(ν, P ./ maximum(P),
     axs[i].semilogy(ν, P ./ maximum(P),
-    label = labels[i], linewidth = 2, color = "C$(i-1)")
+    label = labels[i], linewidth = i == 1 ? 1.0 : 2.0, color = "C$(i-1)")
     axs[i].text(0.99, 0.8, labels[i]; ha = "right", transform = axs[i].transAxes,
     color = "C$(i-1)")
     # @show std(r)
@@ -195,14 +195,15 @@ for (i, u) in enumerate(u0s)
     # PyPlot.plot(10rfftfreq(length(r)), P ./ maximum(P),
     # lw = 1.0, alpha = 0.5, color = "C$(i-1)")
     # PyPlot.plot(r)
-    axs[i].set_yticks([])
-    axs[i].set_ylim(10.0^(-6), 1.0)
+    # axs[i].set_yticks([])
+    axs[i].set_ylim(10.0^(-5), 1.0)
+    axs[i].set_yticks(10.0 .^ (-1:-2:-5))
     axs[i].set_xlim(0, 0.4)
 end
-axs[2].set_ylabel("Fourier spectrum")
+axs[2].set_ylabel("\$P / \\mathrm{max}(P)\$")
 axs[3].set_xlabel("frequency \$\\nu\$")
 fig.tight_layout()
-fig.subplots_adjust(bottom = 0.16, left = 0.09, top = 0.98, right = 0.93, hspace = 0.1)
+fig.subplots_adjust(bottom = 0.1, left = 0.2, top = 0.98, right = 0.93, hspace = 0.1)
 fsave(plotsdir("spectra"), fig)
 
 # %% fitzhugh new
@@ -293,20 +294,27 @@ axs[5].set_yticks([])
 
 # Fig D: timeseries, pulses, refractory period
 using OrdinaryDiffEq
-tstops = [20, 80, 170] # callback times
-
-condition(u,t,integ) = t ∈ tstops # pulse times
+pulses_start = [20, 80, 170] # callback times
+pulse_width = 4
+pulses_end = pulses_start .+ pulse_width
+pulses = sort!(vcat(pulses_start, pulses_end))
+Ipulse = 0.2
+condition(u,t,integ) = t ∈ pulses # pulse times
 function affect!(integ)
-    integ.u = SVector(integ.u[1] + 0.25, integ.u[2])
+    i = integ.t ∈ pulses_start ? Ipulse : 0.0
+    integ.p[4] = i
+    @show i, integ.t, integ.p
 end
 cb = DiscreteCallback(condition, affect!)
 
 Tf = 250.0
 dt = 0.1
 prob = ODEProblem(ds, (0.0, Tf))
-sol = solve(prob, Tsit5(); callback=cb, tstops = tstops, dtmax = 0.01, maxiter = typemax(Int))
+sol = solve(prob, Tsit5(); callback=cb, tstops = pulses, dtmax = 0.01, maxiter = typemax(Int))
 
 axs[2].plot(sol.t, sol[1, :])
+pt = [any(x -> x ≤ t ≤ x + pulse_width, pulses_start) ? Ipulse : 0.0 for t in sol.t]
+axs[2].plot(sol.t, pt; color = "C2")
 axs[2].set_xlabel("\$t\$")
 axs[2].set_ylabel("\$u\$")
 
@@ -314,7 +322,7 @@ axs[2].set_ylabel("\$u\$")
 a = 8.
 b = 0.2
 ε = 0.01
-I = 0.
+I = 0.0
 
 xgrid = -0.3:0.02:1.1
 ygrid = -0.2:0.01:1
@@ -346,7 +354,7 @@ I = 0.
 set_parameter!(ds, [a,b,ε,I])
 add_nullclines!(ax, a, b, ε, I)
 
-tr = trajectory(ds, 400.0, u)
+tr = trajectory(ds, 400.0)
 ax.plot(columns(tr)...; color = "C2")
 ax.scatter(tr[1]...; color = "C2", s = 20)
 ax.set_xlim(-0.5,1.1)
