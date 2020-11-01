@@ -255,8 +255,6 @@ opts = ContinuationPar(
 )
 
 # we define an iterator to hold the continuation routine
-# iter = BK.PALCIterable(F, Jac_m, [0.8], 1., (BK.@lens _), opts; verbosity = 2)
-# we define an iterator to hold the continuation routine
 p0 = 0.3
 u0 = [350.0]
 iter = BK.PALCIterable(F, Jac_m, u0, p0, (BK.@lens _), opts; verbosity = 2)

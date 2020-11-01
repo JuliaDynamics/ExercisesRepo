@@ -1,4 +1,6 @@
-include("style.jl")
+using DrWatson
+@quickactivate "ExercisesRepo"
+include(srcdir("style.jl"))
 
 # %% 1d climate
 using DynamicalSystems, PyPlot, Roots
