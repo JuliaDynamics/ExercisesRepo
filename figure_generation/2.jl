@@ -169,18 +169,25 @@ u0s = (
 labels = (
     "chaotic",
     "periodic",
-    "quasiper.",
+    "quasiperiodic",
 )
 
 hh = Systems.henonheiles()
 fig, axs = subplots(3, 1; figsize = (figx/2.5, figx/2.4), sharex = true)
 
+δt = 0.05
+
 for (i, u) in enumerate(u0s)
-    r = trajectory(hh, 1000.0, u; dt = 0.1)[:, 1]
+   # r = trajectory(hh, 1000.0, u; dt = 0.1)[:, 1]
+    r = trajectory(hh, 30000.0, u; dt = δt)[:, 1]
     P = abs.(rfft(r .- mean(r)))
-    axs[i].plot(10rfftfreq(length(r)), P ./ maximum(P),
+    P[1] = P[2]
+    ν = rfftfreq(length(r))/δt
+    # axs[i].plot(ν, P ./ maximum(P),
+    axs[i].semilogy(ν, P ./ maximum(P),
     label = labels[i], linewidth = 2, color = "C$(i-1)")
-    axs[i].legend()
+    axs[i].text(0.99, 0.8, labels[i]; ha = "right", transform = axs[i].transAxes,
+    color = "C$(i-1)")
     # @show std(r)
     # r .+= 0.5randn(length(r))
     # P = abs2.(rfft(r .- mean(r)))
@@ -188,18 +195,11 @@ for (i, u) in enumerate(u0s)
     # lw = 1.0, alpha = 0.5, color = "C$(i-1)")
     # PyPlot.plot(r)
     axs[i].set_yticks([])
-    axs[i].set_ylim(0, 1.0)
-    axs[i].set_xlim(0, 0.2)
+    axs[i].set_ylim(0.002, 1.0)
+    axs[i].set_xlim(0, 0.4)
 end
-axs[3].set_xlabel("frequency \$\\omega\$")
+axs[2].set_ylabel("Fourier spectrum")
+axs[3].set_xlabel("frequency \$\\nu\$")
 fig.tight_layout()
-fig.subplots_adjust(bottom = 0.18, left = 0.1, top = 0.98, right = 0.92, hspace = 0.1)
-# fsave(joinpath(figdir, "spectra"), fig)
-
-# figure()
-# plane = (1, 0.0)
-# for u0 in u0s
-#     psos = poincaresos(hh, plane, 20000.0; u0 = u0)
-#     PyPlot.scatter(psos[:, 2], psos[:, 4], s = 2.0)
-# end
-# xlabel("\$q_2\$"); ylabel("\$p_2\$")
+fig.subplots_adjust(bottom = 0.16, left = 0.09, top = 0.98, right = 0.93, hspace = 0.1)
+fsave(plotsdir("spectra"), fig)
