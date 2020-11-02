@@ -1,11 +1,10 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
-
-# %% Animation of changing ε in curve of 1D energy balance model
 using Makie, DynamicalSystems, InteractiveChaos
 using AbstractPlotting.MakieLayout
 
+# %% Animation of changing ε in curve of 1D energy balance model
 function fitzhugh(x, p, t)
     u, w = x
     I, a, b = p
@@ -39,3 +38,38 @@ on(spoint) do pos
     tr = trajectory(fh, 10000, SVector(pos...))
     lines!(ax.scene, columns(tr)...; color = InteractiveChaos.randomcolor())
 end
+
+# %% orbit evolution in a 2D torus
+using OrdinaryDiffEq
+
+R = 2.0
+r = 0.5
+
+function torus(u)
+    θ, φ = u
+    x = (R + r*cos(θ))*cos(φ)
+    y = (R + r*cos(θ))*sin(φ)
+    z = r*sin(θ)
+    return SVector(x, y, z)
+end
+
+function quasiperiodic_f(u, p, t)
+    # here we make the frequency ratio a state variable, because the
+    # trajectory_animator application doesn't allow different parameters for different
+    # initial conditions
+    θ, φ, ω = u
+    θdot = ω
+    φdot = 1.0
+    return SVector(θdot, φdot, 0.0)
+end
+
+ds = ContinuousDynamicalSystem(quasiperiodic_f, [0.0, 0.0, 0.0], nothing)
+u0s = [[0, 0, ω] for ω ∈ [3, sqrt(7), 5]]
+diffeq = (alg = Tsit5(), dtmax = 0.01)
+
+lims = ((-R-r, R+r), (-R-r, R+r), (-3r, 3r))
+
+scene, main, layout, obs = interactive_evolution(
+    ds, u0s; tail = 20000, diffeq, colors = COLORS, transform = torus, lims,
+    plotkwargs = (linewidth = 1.0,),
+)

@@ -61,14 +61,7 @@ function add_identifiers!(fig = gcf(), axs = fig.get_axes(); xloc = 0.985, yloc 
     bbox = Dict(:boxstyle => "round,pad=0.3", :facecolor=>"white", :alpha => 1.0)
     for (i, ax) in enumerate(axs)
         l = collect('a':'z')[i]
-        loc = (xloc, yloc)
-        try
-            ax.text(loc..., "$(l)",
-            transform = ax.transAxes, bbox = bbox, zorder = 99)
-        catch err
-            ax.text(loc..., 1, "$(l)",
-            transform = ax.transAxes, bbox = bbox, zorder = 99)
-        end
+        ax.text(xloc, yloc, "$(l)"; transform = ax.transAxes, bbox = bbox, zorder = 99)
     end
 end
 
@@ -114,15 +107,15 @@ function add_grid!(ax, nx::Int, ny = nx; kwargs...)
 end
 
 """
-    axis_zoomin!(zoomin, origin, zbox, rbox, co, α = 1.0)
+    axis_zoomin!(zoomin, origin, zbox, rbox, co = "C0"; kwargs...)
 Create a zoomin box connecting two axes, the `zoomin` and `origin`.
 The zoom-in box is in the `origin` axis, while the `zoomin` axis is the
 box. `rbox` is the enclosing box of the `zoomin` axes, while `zbox`
 is the small "zoom-in" box of the `origin` axis. They must be in the form
 ((x1, y1), (x2, y2)). `co` is color `α` the alpha setting.
 """
-function axis_zoomin!(zoomin, origin, zbox, rbox, co, α = 1.0;
-    connect_lines = true, lw = 2.0)
+function axis_zoomin!(zoomin, origin, zbox, rbox, co = "C0";
+    connect_lines = true, lw = 2.0, α = 1.0)
     # plot box in zoomin axis
     line, = zoomin.plot(
     [rbox[1][1], rbox[2][1], rbox[2][1], rbox[1][1], rbox[1][1]],

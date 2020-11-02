@@ -303,7 +303,6 @@ condition(u,t,integ) = t ∈ pulses # pulse times
 function affect!(integ)
     i = integ.t ∈ pulses_start ? Ipulse : 0.0
     integ.p[4] = i
-    @show i, integ.t, integ.p
 end
 cb = DiscreteCallback(condition, affect!)
 
@@ -354,7 +353,7 @@ I = 0.
 set_parameter!(ds, [a,b,ε,I])
 add_nullclines!(ax, a, b, ε, I)
 
-tr = trajectory(ds, 400.0)
+tr = trajectory(ds, 400.0, [0.0, 0.1])
 ax.plot(columns(tr)...; color = "C2")
 ax.scatter(tr[1]...; color = "C2", s = 20)
 ax.set_xlim(-0.5,1.1)
