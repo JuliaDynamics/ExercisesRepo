@@ -9,12 +9,12 @@ using Makie
 using OrdinaryDiffEq
 
 # Standard map trajectories
-ds = Systems.standardmap()
+ds = Systems.standardmap(; k = 16)
 u0s = [[θ, p] for θ ∈ 0:2π for p ∈ 0:2π]
 lims = ((0, 2π), (0, 2π))
 
 scene, main, layout, obs = interactive_evolution(
-    ds, u0s; tail = 100000, lims,
+    ds, u0s; tail = 10000, lims,
 )
 main.xlabel = "θ"
 main.ylabel = "p"
