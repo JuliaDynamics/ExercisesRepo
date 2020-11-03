@@ -14,7 +14,7 @@ PyPlot.rc("errorbar", capsize = 6)
 PyPlot.rc("axes", grid = true)
 PyPlot.rc("grid", color = "0.75", alpha = 0.75)
 
-PyPlot.rc("font", size = 28) # set default fontsize
+PyPlot.rc("font", size = 24) # set default fontsize
 PyPlot.rc("axes", labelsize = 32)
 PyPlot.rc("legend", fontsize = 26)
 # PyPlot.rc("font", family = "Times New Roman") # Serif main font
