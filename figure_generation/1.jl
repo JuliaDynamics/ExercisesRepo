@@ -4,7 +4,6 @@ include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot, Random
 
 # %% phase space plots
-close("all")
 fig = figure(figsize = (figx, figx/2))
 
 ax = subplot(231)
@@ -36,7 +35,7 @@ tr = trajectory(ds, n, ic[1])
 ax.plot(0:n, tr[:, 2], c = COLORS[1], marker = "o", lw = 1.0)
 ax.set_yticks([0, 2π])
 ax.set_yticklabels(["0", "2\$\\pi\$"])
-ax.set_ylabel("\$p\$",labelpad=-10)
+ax.set_ylabel("\$p\$",labelpad=-15)
 ax.set_xticks([0, n])
 ax.set_xlabel("\$n\$", labelpad = -15)
 
@@ -104,8 +103,8 @@ ax.set_xlabel("\$t\$", labelpad = -15)
 
 
 fig.tight_layout()
-fig.subplots_adjust(top = 0.93, wspace = 0.4, hspace = 0.25, bottom = 0.1, left = 0.07)
-# fsave(joinpath(figdir, "trajectories"), fig)
+fig.subplots_adjust(top = 0.93, wspace = 0.4, hspace = 0.25, bottom = 0.1, left = 0.05)
+wsave(plotsdir("trajectories"), fig)
 
 
 # %% Magnetic pendulum

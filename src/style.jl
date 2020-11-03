@@ -6,6 +6,8 @@ function fsave(s, fig::Figure; pdf = false, dpi = 600)
     fig.savefig(s*".png", dpi = dpi, transparent = false)
     pdf && fig.savefig(s*".pdf", dpi = dpi, transparent = false)
 end
+DrWatson._wsave(s, fig::Figure) = fig.savefig(s, dpi = 600, transparent = false)
+
 
 PyPlot.rc("lines", lw = 2.6)
 PyPlot.rc("errorbar", capsize = 6)
