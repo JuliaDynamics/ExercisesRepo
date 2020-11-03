@@ -1,6 +1,9 @@
 **Contents**
 - [Installation and reproducibility](#installation-and-reproducibility)
 - [Exercise datasets](#exercise-datasets)
+- [Multiple choice questions](#multiple-choice-questions)
+- [Figures](#figures)
+- [Interactive applications, videos, extra plots](#interactive-applications--videos--extra-plots)
 
 ## Installation and reproducibility
 
@@ -39,12 +42,16 @@ which ensures that only local directories will be used, as well as the *exact* p
 The datasets that are used in the book exercises are contained in the `timeseries` folder, all being in the same text-based format. The same folder contains information of where this data is coming from: `data_explanations.md`. Some data are generated from simulations in the script `generating_code.jl`.
 
 ## Multiple choice questions
+Multiple choice questions that we use during lecturing to increase student involvement are in the `multiple_choice` folder.
 
 ## Figures
 The code that creates the figures of our book is in the `figure_generation` folder. Notice however that some figures were made with (or enhanced by) PowerPoint and thus we do not share this here.
 
+The figures themselves are located in the `plots` directory.
+
 ## Interactive applications, videos, extra plots
-In the folder `animations` we provide animation-related scripts (which are self-documented by comments). These provide the following extras that we use while lecturing the various chapters:
+In the folder `animations_code` we provide animation-related scripts (some of which are self-documented by comments). These provide the following extras that we use while lecturing the various chapters:
 * launch interactive applications
 * create videos
-* create additional plots not included in the book
+
+We have also recorded videos for easier access, stored in `animations_videos`.
