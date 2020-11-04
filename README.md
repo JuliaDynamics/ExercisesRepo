@@ -1,9 +1,19 @@
 **Contents**
+- [Tutorials](#tutorials)
 - [Installation and reproducibility](#installation-and-reproducibility)
 - [Exercise datasets](#exercise-datasets)
 - [Multiple choice questions](#multiple-choice-questions)
 - [Figures](#figures)
 - [Interactive applications, videos, extra plots](#interactive-applications--videos--extra-plots)
+
+
+## Tutorials
+Here we list useful tutorials in helping you getting used to the Julia language, DynamicalSystems.jl or other useful Julia packages.
+
+- https://www.youtube.com/watch?v=8h8rQyEpiZA&t=42s : A beginner introduction to the Julia language
+- https://www.youtube.com/watch?v=Fi7Pf2NveH0 : Intensive Julia workshop, for people already familiar with programming that want to transition to Julia
+- https://www.youtube.com/watch?v=13hqE_1a158 : Introduction to DynamicalSystems.jl
+- https://www.youtube.com/watch?v=KPEqYtEd-zY : Introduction to solving differential equations in Julia, which is generally useful for nonlinear dynamics
 
 ## Installation and reproducibility
 
