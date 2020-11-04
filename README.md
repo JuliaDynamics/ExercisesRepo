@@ -8,12 +8,17 @@
 
 
 ## Tutorials
-Here we list useful tutorials in helping you getting used to the Julia language, DynamicalSystems.jl or other useful Julia packages.
+Here we list useful tutorials and other sources that can help you getting used to the Julia language, DynamicalSystems.jl or other useful Julia packages.
 
 - https://www.youtube.com/watch?v=8h8rQyEpiZA&t=42s : A beginner introduction to the Julia language
 - https://www.youtube.com/watch?v=Fi7Pf2NveH0 : Intensive Julia workshop, for people already familiar with programming that want to transition to Julia
 - https://www.youtube.com/watch?v=13hqE_1a158 : Introduction to DynamicalSystems.jl
+- https://juliadynamics.github.io/DynamicalSystems.jl/dev/ : Documentation for DynamicalSystems.jl
+- https://juliadynamics.github.io/JuliaDynamics/ : Website of the JuliaDynamics organization
 - https://www.youtube.com/watch?v=KPEqYtEd-zY : Introduction to solving differential equations in Julia, which is generally useful for nonlinear dynamics
+- https://julialang.org/community/ : Resources for asking questions about Julia
+- https://discourse.julialang.org/ : Official Julia forum (you can also post questions there)
+
 
 ## Installation and reproducibility
 
