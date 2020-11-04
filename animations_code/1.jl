@@ -2,19 +2,40 @@ using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
 
-# Animate evolution of trajectories in Lorenz
+# %% The very first code snippet of the course
+using DynamicalSystems # load the library
+
+function lorenz_rule(u, p, t)
+    σ, ρ, β = p
+    x, y, z = u
+    dx = σ*(y - x)
+    dy = x*(ρ - z) - y
+    dz = x*y - β*z
+    return SVector(dx, dy, dz) # Static Vector
+end
+
+p  = [10.0, 28.0, 8/3] # parameters: σ, ρ, β
+u₀ = [0, 10.0, 0]      # initial state
+# create an instance of a `DynamicalSystem`
+lorenz = ContinuousDynamicalSystem(lorenz_rule, u₀, p)
+
+T  = 100.0 # total time
+dt = 0.01  # sampling time
+A  = trajectory(lorenz, T; dt)
+
+# %% Animate evolution of trajectories in the Standard map
 using InteractiveChaos
 using DynamicalSystems
-using Makie
+import Makie
 using OrdinaryDiffEq
 
 # Standard map trajectories
-ds = Systems.standardmap(; k = 16)
+ds = Systems.standardmap(; k = 1.0)
 u0s = [[θ, p] for θ ∈ 0:2π for p ∈ 0:2π]
 lims = ((0, 2π), (0, 2π))
 
 scene, main, layout, obs = interactive_evolution(
-    ds, u0s; tail = 10000, lims,
+    ds, u0s; tail = 1000, lims,
 )
 main.xlabel = "θ"
 main.ylabel = "p"

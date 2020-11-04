@@ -102,8 +102,7 @@ b = 0.2
 ε = 0.01
 I = 0.0
 
-# ds = Systems.fitzhugh_nagumo_new(; a, b, ε, I )
-ds = Systems.fitzhugh_nagumo([0,0.0]; a, b, ε, I )
+ds = Systems.fitzhugh_nagumo([0,0.0]; a, b, ε, I)
 
 xgrid = -0.3:0.02:1.1
 ygrid = -0.1:0.01:0.4
@@ -137,7 +136,7 @@ add_nullclines!(ax, a, b, ε, I)
 add_streamlines!(ax, a, b, ε, I)
 
 # Add tex to axs [1] explaining nullclines
-sss = 20
+sss = 24
 props = Dict(:boxstyle=>"round", :alpha=>1., :facecolor => "white")
 ax.text(0.5, 0.35, "\$\\dot{w}>0\$", color = "C3", size = sss, bbox=props)
 ax.text(-0.1, 0.35, "\$\\dot{w}<0\$", color = "C3", size = sss, bbox=props)
@@ -200,7 +199,7 @@ cb = DiscreteCallback(condition, affect!)
 Tf = 250.0
 dt = 0.1
 prob = ODEProblem(ds, (0.0, Tf))
-sol = solve(prob, Tsit5(); callback=cb, tstops = pulses, dtmax = 0.01, maxiter = typemax(Int))
+sol = solve(prob, Tsit5(); callback=cb, tstops = pulses, dtmax = 0.1)
 
 axs[2].plot(sol.t, sol[1, :])
 pt = [any(x -> x ≤ t ≤ x + pulse_width, pulses_start) ? Ipulse : 0.0 for t in sol.t]
@@ -261,4 +260,4 @@ ax.set_yticks([0, 0.6])
 
 fig.subplots_adjust(bottom = 0.08, left = 0.05, top = 0.95, right = 0.97, hspace = 0.2)
 add_identifiers!(fig)
-wsave(plotsdir("fitzhugh"), fig)
+# wsave(plotsdir("fitzhugh"), fig)

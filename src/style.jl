@@ -2,10 +2,6 @@ include("colorscheme.jl")
 using PyPlot
 using3D()
 
-function fsave(s, fig::Figure; pdf = false, dpi = 600)
-    fig.savefig(s*".png", dpi = dpi, transparent = false)
-    pdf && fig.savefig(s*".pdf", dpi = dpi, transparent = false)
-end
 DrWatson._wsave(s, fig::Figure) = fig.savefig(s, dpi = 600, transparent = false)
 
 
@@ -14,7 +10,9 @@ PyPlot.rc("errorbar", capsize = 6)
 PyPlot.rc("axes", grid = true)
 PyPlot.rc("grid", color = "0.75", alpha = 0.75)
 
-PyPlot.rc("font", size = 24) # set default fontsize
+PyPlot.rc("font", size = 26) # set default fontsize
+PyPlot.rc("xtick", labelsize = 24)
+PyPlot.rc("ytick", labelsize = 24)
 PyPlot.rc("axes", labelsize = 32)
 PyPlot.rc("legend", fontsize = 26)
 # PyPlot.rc("font", family = "Times New Roman") # Serif main font

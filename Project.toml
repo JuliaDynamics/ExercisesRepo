@@ -21,5 +21,5 @@ Roots = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
 [compat]
 ChaosTools = "1.18"
 DrWatson = "1.16"
-InteractiveChaos = "0.10.1"
+InteractiveChaos = "0.10.2"
 julia = "1.5"
