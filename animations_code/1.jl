@@ -26,8 +26,7 @@ A  = trajectory(lorenz, T; dt)
 # %% Animate evolution of trajectories in the Standard map
 using InteractiveChaos
 using DynamicalSystems
-import Makie
-using OrdinaryDiffEq
+using Makie
 
 # Standard map trajectories
 ds = Systems.standardmap(; k = 1.0)
@@ -41,6 +40,7 @@ main.xlabel = "θ"
 main.ylabel = "p"
 
 # %% Lorenz system trajectories
+using OrdinaryDiffEq: Tsit5, Vern9
 ds = Systems.lorenz()
 
 u0s =  [[10,20,40.0] .+ rand(3) for _ in 1:7]
@@ -52,22 +52,22 @@ scene, main, layout, obs = interactive_evolution(
 )
 
 # %% Add poincare plane
-using AbstractPlotting.MakieLayout
-
-o = Point3f0(-25, 0, 0)
-w = Point3f0(50, 0, 50)
-p = FRect3D(o, w)
+import AbstractPlotting
+using AbstractPlotting.MakieLayout: LAxis
+o = AbstractPlotting.Point3f0(-25, 0, 0)
+w = AbstractPlotting.Point3f0(50, 0, 50)
+p = AbstractPlotting.FRect3D(o, w)
 
 # These lines are necessary for transparent planes
-a = RGBAf0(0,0,0,0)
-c = RGBAf0(0.2, 0.2, 0.8, 1.0)
+a = AbstractPlotting.RGBAf0(0,0,0,0)
+c = AbstractPlotting.RGBAf0(0.2, 0.2, 0.8, 1.0)
 img = AbstractPlotting.ImagePattern([c a; a c]);
-mesh!(main, p; color = img)
+AbstractPlotting.mesh!(main, p; color = img);
 
 # %% Plot Poincare sos
 psosplot = layout[:, 2] = LAxis(scene)
 psos = poincaresos(ds, (2, 0.0), 2000.0)
-scatter!(psosplot, psos[:, 1], psos[:, 3])
+AbstractPlotting.scatter!(psosplot, psos[:, 1], psos[:, 3])
 
 display(scene)
 
@@ -79,9 +79,9 @@ u0s = [[0.0, -0.25, 0.42081, 0.0],
 [0.0, -0.31596, 0.354461, 0.0591255]]
 
 diffeq = (alg = Vern9(), dtmax = 0.01)
-idxs = (1, 2, 4)
+idxs = (1, 2)
 
 scene, main, layout, obs = interactive_evolution(
     ds, u0s; idxs, tail = 2000, diffeq, colors = COLORS,
 )
-main.scene[Axis][:names, :axisnames] = ("q₁", "q₂", "p₂")
+main.scene[AbstractPlotting.Axis][:names, :axisnames] = ("q₁", "q₂", "p₂")
