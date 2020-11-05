@@ -41,7 +41,7 @@ To (locally) reproduce this project, first install Julia and then do the followi
 1. This repository uses matplotlib (package `PyPlot`) for plots. You could use any plotting package instead, but if you want to use `PyPlot` run the following commands to ensure a working installation for all operating systems:
    ```
    julia> ENV["PYTHON"] = ""
-   julia> Pkg.add("PyCall"); Pkg.build("Pycall")
+   julia> Pkg.add("PyCall"); Pkg.build("PyCall")
    julia> Pkg.add("PyPlot"); using PyPlot
    ```
 
