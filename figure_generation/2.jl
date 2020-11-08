@@ -125,7 +125,9 @@ function add_streamlines!(ax, a, b, ε, I)
             ux[i, j], uy[i, j] = ds.f(SVector(x, y), ds.p, 0)
         end
     end
-    ax.streamplot(Vector(xgrid), Vector(ygrid), ux', uy'; linewidth = 0.5, density = 0.5, color = "C7")
+    ax.streamplot(Vector(xgrid), Vector(ygrid), ux', uy';
+        linewidth = 0.5, density = 0.5, color = "C0"
+    )
     ax.set_ylim(ygrid[1], ygrid[end])
 end
 
@@ -136,11 +138,11 @@ add_nullclines!(ax, a, b, ε, I)
 add_streamlines!(ax, a, b, ε, I)
 
 # Add tex to axs [1] explaining nullclines
-sss = 24
+sss = 28
 props = Dict(:boxstyle=>"round", :alpha=>1., :facecolor => "white")
-ax.text(0.5, 0.35, "\$\\dot{w}>0\$", color = "C3", size = sss, bbox=props)
-ax.text(-0.1, 0.35, "\$\\dot{w}<0\$", color = "C3", size = sss, bbox=props)
-ax.text(0, 0.1, "\$\\dot{u}<0\$", color = "C4", size = sss, bbox=props)
+ax.text(0.5, 0.33, "\$\\dot{w}>0\$", color = "C3", size = sss, bbox=props)
+ax.text(-0.1, 0.33, "\$\\dot{w}<0\$", color = "C3", size = sss, bbox=props)
+ax.text(-0.05, 0.1, "\$\\dot{u}<0\$", color = "C4", size = sss, bbox=props)
 ax.text(0.45, -0.05, "\$\\dot{u}>0\$", color = "C4", size = sss, bbox=props)
 ax.set_ylabel("\$w\$"; labelpad = -15)
 ax.set_xlabel("\$u\$"; labelpad = -15)
@@ -154,13 +156,13 @@ for ax in (axs[3], axs[5])
 
     u1 = [0.19, 0.]
     tr1 = trajectory(ds, 200.0, u1)
-    ax.plot(columns(tr1)...; color = "C2", lw = 1.5)
-    ax.scatter(tr1[1]...; color = "C2", s = 20)
+    ax.plot(columns(tr1)...; color = "C1", lw = 1.5)
+    ax.scatter(tr1[1]...; color = "C1", s = 20)
 
     u2 = [0.21, 0.]
     tr2 = trajectory(ds, 300.0, u2)
-    ax.plot(columns(tr2)...; color = "C1", lw = 1.5)
-    ax.scatter(tr2[1]...; color = "C1", s = 20)
+    ax.plot(columns(tr2)...; color = "C2", lw = 1.5)
+    ax.scatter(tr2[1]...; color = "C2", s = 20)
 
     # ic = (tr1[1] + tr2[1]) ./ 2
     # ax.scatter(ic...; color = "k", s = 10)
@@ -249,8 +251,8 @@ set_parameter!(ds, [a,b,ε,I])
 add_nullclines!(ax, a, b, ε, I)
 
 tr = trajectory(ds, 400.0, [0.0, 0.1])
-ax.plot(columns(tr)...; color = "C2")
-ax.scatter(tr[1]...; color = "C2", s = 20)
+ax.plot(columns(tr)...; color = "C1")
+ax.scatter(tr[1]...; color = "C1", s = 20)
 ax.set_xlim(-0.5,1.1)
 ax.set_ylim(-0.1,0.6)
 ax.set_ylabel("\$w\$"; labelpad = -15)
@@ -260,4 +262,4 @@ ax.set_yticks([0, 0.6])
 
 fig.subplots_adjust(bottom = 0.08, left = 0.05, top = 0.95, right = 0.97, hspace = 0.2)
 add_identifiers!(fig)
-# wsave(plotsdir("fitzhugh"), fig)
+wsave(plotsdir("fitzhugh"), fig)

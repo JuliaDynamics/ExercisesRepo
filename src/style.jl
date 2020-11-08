@@ -39,11 +39,14 @@ if false # test font
 end
 
 if false # test color scheme
-    figure(figsize = (20, 10)) # show colors
-    ax1 = subplot(131)
-    ax2 = subplot(132)
-    ax3 = subplot(133)
-    lw = 120
+    fig = figure(figsize = (20, 15)) # show colors
+    ax1 = subplot(231)
+    ax2 = subplot(232)
+    ax3 = subplot(233)
+    ax4 = subplot(223)
+    ax5 = subplot(224)
+    lw = 60
+    L = length(COLORSCHEME)
     for (i, c) in enumerate(COLORS)
         chsv = matplotlib.colors.rgb_to_hsv(matplotlib.colors.to_rgb(c))
         ax1.plot([0, 1], [0, 0] .+ i, color = c, lw = lw)
@@ -52,7 +55,11 @@ if false # test color scheme
         ax2.set_title("brightness")
         ax3.plot([0, 1], [0, 0] .+ i, color = string(chsv[2]), lw = lw)
         ax3.set_title("saturation")
+        x = 0:0.05:5π
+        ax4.plot(x, cos.(x .+ i/2) .+ rand(length(x))/2; color=c, lw = 2)
+        ax5.bar(collect(1:4) .+ (i-1)/L, 0.5rand(4) .+ 0.5, 1/L; color=c)
     end
+    fig = tight_layout()
 end
 
 bbox = Dict(:boxstyle => "round,pad=0.3", :facecolor=>"white", :alpha => 1.0)
