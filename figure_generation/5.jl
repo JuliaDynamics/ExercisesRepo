@@ -221,3 +221,35 @@ axs[2].set_yticklabels(["0", "", "", "",  "","", "-12"])
 fig.tight_layout()
 fig.subplots_adjust(left=0.14, bottom = 0.15, hspace = 0.1)
 # fsave(joinpath(figdir, "dimension"), fig)
+
+
+# %% add
+fig = figure(;figsize = (figx/2, figy))
+ax = gca()
+he = Systems.henon()
+N = 10000
+tr = trajectory(he, N, Ttr = 100)
+es = [0.2, 0.05, 0.01]
+ax.grid(false)
+mini = minima(tr)
+
+for (i, e) ∈ enumerate(es)
+    for x in mini[1]:e:1.4
+        ax.axvline(x; color = "k", lw = 1.0, alpha = 1/(3^i))
+    end
+    for y in mini[2]:e:0.4
+        ax.axhline(y; color = "k", lw = 1.0, alpha = 1/(3^i))
+    end
+    p, bins = binhist(e, tr)
+    for b in bins
+        r = matplotlib.patches.Rectangle(b, e, e; alpha = 0.8, color = "C$i")
+        ax.add_artist(r)
+    end
+end
+ax.plot(tr[:, 1], tr[:, 2], ls = "None", marker = ".", color = COLORS[1], ms = 1, zorder = 99)
+ax.set_yticks([])
+ax.set_ylabel("\$y\$")
+ax.set_xticks([])
+ax.set_xlabel("\$x\$")
+fig.subplots_adjust(left=0.05, bottom = 0.1, right = 0.98, top = 0.98)
+wsave(plotsdir("henon_gridding"), fig)
