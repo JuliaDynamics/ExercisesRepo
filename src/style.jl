@@ -4,6 +4,13 @@ using3D()
 
 DrWatson._wsave(s, fig::Figure) = fig.savefig(s, dpi = 600, transparent = false)
 
+"""
+    rdspl(x, n = 3)
+Round `x` with `n` sigdigits for display purposes.
+"""
+rdspl(x::Real, n = 3) = round(x, sigdigits=n)
+rdspl(x::AbstractVector, n = 3) = Tuple((round.(Float64.(x); sigdigits=n)))
+
 
 PyPlot.rc("lines", lw = 2.6)
 PyPlot.rc("errorbar", capsize = 6)
