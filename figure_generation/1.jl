@@ -74,16 +74,18 @@ ax.set_xlabel("\$t\$", labelpad = -15)
 
 ds = Systems.henonheiles()
 
-u0s = [[0.0, -0.25, 0.42081, 0.0],
-[0.0, 0.1, 0.5, 0.0],
-[0.0, -0.31596, 0.354461, 0.0591255]]
+u0s = (
+    [0.0, -0.25, 0.42, 0.0], # chaotic
+    [0.0, 0.1, 0.5, 0.0], # quasiperiodic
+    [0.0, 0.30266571044921875, 0.4205654433900762, 0.0], # periodic
+)
 
 ax = subplot(233, projection = "3d")
 ax.clear()
 ax.set_title("Hénon–Heiles", pad = 24)
 for (i, u0) in enumerate(u0s)
     tr = trajectory(ds, 50, u0; Ttr = 50)
-    ax.plot3D(tr[:, 1], tr[:, 2], tr[:, 3], c = COLORS[i], alpha = 1 -(i-1)*0.2)
+    ax.plot3D(tr[:, 1], tr[:, 2], tr[:, 3], c = COLORS[i], alpha = 1)
 end
 ax.set_xticklabels([])
 ax.set_yticklabels([])

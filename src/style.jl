@@ -17,11 +17,11 @@ PyPlot.rc("errorbar", capsize = 6)
 PyPlot.rc("axes", grid = true)
 PyPlot.rc("grid", color = "0.75", alpha = 0.75)
 
-PyPlot.rc("font", size = 26) # set default fontsize
+PyPlot.rc("font", size = 28) # set default fontsize
 PyPlot.rc("xtick", labelsize = 24)
 PyPlot.rc("ytick", labelsize = 24)
 PyPlot.rc("axes", labelsize = 32)
-PyPlot.rc("legend", fontsize = 26)
+PyPlot.rc("legend", fontsize = 30)
 # PyPlot.rc("font", family = "Times New Roman") # Serif main font
 PyPlot.rc("font", family = "DejaVu Sans") # sans main font
 # PyPlot.rc("mathtext", rm = "sanserif", fontset="dejavusans") # sans math font

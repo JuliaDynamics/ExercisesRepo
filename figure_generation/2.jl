@@ -16,7 +16,7 @@ dTdt(T; ε = 0.65, α=αtan, s = 1.0) = dTdt(T, ε, α, s)
 # plot(Ts, dTdt.(Ts, 0.9))
 # axhline(0)
 
-fig = figure(figsize = (figx/1.5, figx/3))
+fig = figure(figsize = (figx/2, figy))
 Ts = 200:0.5:320.0
 arrows = 210:10:300 |> collect
 deleteat!(arrows, findfirst(isequal(260), arrows))
@@ -42,7 +42,7 @@ for r in arrows
 end
 legend()
 tight_layout()
-subplots_adjust(bottom = 0.2, left = 0.1)
+subplots_adjust(bottom = 0.2, left = 0.12)
 wsave(plotsdir("1dstatespace"), fig)
 
 
@@ -68,6 +68,7 @@ Ms = [
 
 titles = ["repulsive node", "attractive spiral", "hyperbolic/saddle", "center"]
 
+using LinearAlgebra
 function stream_eigs!(ax, M, c = "C0")
     for (i, x) in enumerate(xgrid)
         for (j, y) in enumerate(ygrid)
@@ -76,7 +77,7 @@ function stream_eigs!(ax, M, c = "C0")
     end
 
     ax.streamplot(Vector(xgrid), Vector(ygrid), ux', uy';
-        linewidth = 1.5, density = 1.0, color = c
+        linewidth = 1.5, density = 0.5, color = c, arrowsize = 2,
     )
     ev = eigen(M)
     push!(alleigs, ev.values)
@@ -92,7 +93,7 @@ function stream_eigs!(ax, M, c = "C0")
     ax.set_xticks([])
     ax.set_yticks([])
     ax.plot(0, 0; marker = "o", mec = "C0", mew = 1,
-        markersize = 10, mfc = "w", zorder = 99
+        markersize = 12, mfc = "C0", zorder = 99
     )
 end
 
@@ -146,7 +147,7 @@ for (i, x) in enumerate(xgrid)
     end
 end
 axs[6].streamplot(Vector(xgrid), Vector(ygrid), ux', uy';
-    linewidth = 1.5, density = 1.0, color = "C5"
+    linewidth = 1.5, density = 0.5, color = "C5", arrowsize = 2
 )
 ax = axs[6]
 ax.set_xlim(xgrid[1], xgrid[end])
@@ -163,15 +164,15 @@ wsave(plotsdir("2ddynamics"), fig)
 using DynamicalSystems, PyPlot, FFTW, Statistics
 
 u0s = (
-    [0.0, -0.25, 0.42, 0.0],
-    [0.0, 0.30266571044921875, 0.4205654433900762, 0.0],
-    [0.0, 0.1, 0.5, 0.0],
+    [0.0, -0.25, 0.42, 0.0], # chaotic
+    [0.0, 0.1, 0.5, 0.0], # quasiperiodic
+    [0.0, 0.30266571044921875, 0.4205654433900762, 0.0], # periodic
 )
 
 labels = (
     "chaotic",
-    "periodic",
     "quasiperiodic",
+    "periodic",
 )
 
 hh = Systems.henonheiles()
@@ -282,7 +283,7 @@ for ax in (axs[3], axs[5])
     # ax.scatter(ic...; color = "k", s = 10)
 
     ax.plot(0, 0; marker = "o", mec = "C0", mew = 1,
-        markersize = 6, mfc = "w", zorder = 99)
+        markersize = 10, mfc = "C0", zorder = 99)
     ax.axhline(0; color = "k", lw = 0.5, zorder = 1)
 end
 ax = axs[3]
