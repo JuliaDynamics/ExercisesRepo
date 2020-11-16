@@ -4,7 +4,7 @@ include(srcdir("colorscheme.jl"))
 using Makie, DynamicalSystems, InteractiveChaos
 using AbstractPlotting.MakieLayout
 
-# %% Animation of changing ε in curve of 1D energy balance model
+# %% Fitzhugh clickable phase space
 a = 3.
 b = 0.2
 ε = 0.01
@@ -37,7 +37,7 @@ end
 using OrdinaryDiffEq
 
 R = 2.0
-r = 0.5
+r = 1.0
 
 function torus(u)
     θ, φ = u

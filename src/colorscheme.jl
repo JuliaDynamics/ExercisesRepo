@@ -14,6 +14,7 @@ function Base.getindex(c::CyclicContainer)
 end
 Base.iterate(c::CyclicContainer, i = 1) = iterate(c.c, i)
 
+# TODO: Green and blue are not that well distinguishable
 COLORSCHEME = [
    "#1b2e34",
    "#499cbf",
