@@ -53,14 +53,13 @@ scene, layout = layoutscene(resolution = (1000, 800))
 axts = layout[1, :] = LAxis(scene)
 axmap = layout[2, :] = LAxis(scene)
 
-rrange = 1:0.01:4.0
+rrange = 1:0.001:4.0
 
-sll = labelslider!(scene, "r =", 0:0.01:4.0)
+sll = labelslider!(scene, "r =", rrange)
 layout[3, :] = sll.layout
 r_observable = sll.slider.value
 
 # Timeseries plot
-ns = 0:0.01:1
 L = 100 # length of timeseries to be plotted
 lo = Systems.logistic(0.4; r=rrange[1])
 x = Observable(trajectory(lo, L))
@@ -69,16 +68,19 @@ scatter!(axts, 0:L, x; color = COLORS[1], markersize = 5)
 ylims!(axts, 0, 1)
 
 # Cobweb diagram
-xs = 0:0.01:1
+xs = 0:0.001:1
 f1(x, r = rrange[1]) = r*x*(1-x)
 f2(x, r = rrange[1]) = f1(f1(x,r), r)
+f3(x, r = rrange[1]) = f2(f1(x,r), r)
 
 f1obs = Observable(f1.(xs))
 f2obs = Observable(f2.(xs))
+f3obs = Observable(f3.(xs))
 
 lines!(axmap, [0,1], [0,1]; linewidth = 1, linestyle = :dash, color = COLORS[1])
 f1curve = lines!(axmap, xs, f1obs; color = COLORS[2], linewidth = 2)
 f2curve = lines!(axmap, xs, f2obs; color = COLORS[3], linewidth = 2)
+f3curve = lines!(axmap, xs, f3obs; color = COLORS[4], linewidth = 2)
 
 function cobweb(t) # transform timeseries x into cobweb (point2D)
     # TODO: can be optimized to become in-place instead of allocating
@@ -103,15 +105,17 @@ on(r_observable) do r
     x[] = trajectory(lo, L)
     f1obs[] = f1.(xs, r)
     f2obs[] = f2.(xs, r)
+    f3obs[] = f3.(xs, r)
     cobs[] = cobweb(x[])
 end
 
 # Finally add three buttons to hide/show elements of the plot
 f1button = LButton(scene; label = "f")
 f2button = LButton(scene; label = "f²")
+f3button = LButton(scene; label = "f³")
 cbutton = LButton(scene; label = "cobweb")
 layout[4, :] = buttonlayout = GridLayout(tellwidth = false)
-buttonlayout[:, 1:3] = [f1button, f2button, cbutton]
+buttonlayout[:, 1:4] = [f1button, f2button, f3button, cbutton]
 
 # And add triggering for buttons
 on(cbutton.clicks) do click
@@ -123,6 +127,9 @@ on(f1button.clicks) do click
 end
 on(f2button.clicks) do click
     f2curve.attributes.visible = !(f2curve.attributes.visible[])
+end
+on(f3button.clicks) do click
+    f3curve.attributes.visible = !(f3curve.attributes.visible[])
 end
 
 display(scene)

@@ -26,6 +26,8 @@ ax.set_yticklabels([])
 # ax.set_yticks([0, 2π])
 ax.set_yticklabels([])
 ax.set_xlabel("\$\\theta\$", labelpad = -5)
+ax.set_xlim(0, 2π)
+ax.set_ylim(0, 2π)
 ax.set_ylabel("\$p\$",labelpad=0)
 ax.set_title("Standard map")
 
