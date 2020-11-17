@@ -4,6 +4,7 @@ include(srcdir("colorscheme.jl"))
 using Makie, DynamicalSystems, InteractiveChaos
 using AbstractPlotting.MakieLayout
 
+# %% Sensitive dependence demonstration for Lorenz-63
 using OrdinaryDiffEq: Tsit5, Vern9
 ds = Systems.lorenz()
 u0 = 3ones(dimension(ds))
@@ -42,10 +43,9 @@ plane = (1, 0.0) # first variable crossing 0
 cmap = cgrad(:viridis)
 function galicolor(u)
     g, t = gali(hh, 4000, 4; u0 = u)
-    @show t[end]
     v = clamp(t[end]/500, 0, 1)
     # return cmap.colors[round(Int, v*255 + 1)]
-    RGBf0(0, 0, clamp(v, 0, 1))
+    RGBf0(v/2, 0, v)
 end
 
 state, scene = interactive_poincaresos(
