@@ -316,6 +316,7 @@ axro.set_xlim(pvalues[1], pvalues[end]);
 
 
 # %%
+using DynamicalSystems, PyPlot
 ro = Systems.roessler(ones(3))
 cc = 5.187
 
@@ -329,10 +330,67 @@ for i in 1:length(cs)
 	tr = trajectory(ro, T; Ttr = 200.0, dt)
 	axs[i].plot(0:dt:T, tr[:, 1], lw = 0.5)
 	axs[i].set_yticks([])
-	axs[i].text(1.02, 0.5, "\$c=$(cs[i])\$"; bbox = bbox,
-	transform = axs[i].transAxes, va = :center)
+	axs[i].text(0.99, 0.90, "\$c=$(cs[i])\$"; bbox = bbox,
+	transform = axs[i].transAxes, va = :top, ha=:right, fontsize = 22)
 end
 axs[1].set_xlim(0, T)
-fig.tight_layout()
+fig.tight_layout(pad = 0.2)
 fig.subplots_adjust(hspace = 0.1, bottom = 0.1)
-# fsave(plotsdir("intermittency"), fig)
+
+# %% Use poincare section for Roessler
+using DynamicalSystems, PyPlot
+
+cc = 5.187
+plane = (2, 0.0)
+
+cs = range(5.187; step = -0.002, length = 3)
+
+fig, axs = subplots(length(cs), 1; sharex = true)
+T = 3000
+dt = 0.05
+for i in 1:length(cs)
+	set_parameter!(ro, 3, cs[i])
+	psos = poincaresos(ro, plane, T; Ttr = 200.0, idxs = [1])
+	axs[i].plot(psos[:, 1]; lw = 0.5)
+	axs[i].set_yticks([])
+	axs[i].text(0.99, 0.90, "\$c=$(cs[i])\$"; bbox = bbox,
+	transform = axs[i].transAxes, va = :top, ha=:right, fontsize = 22)
+end
+# axs[1].set_xlim(0, T)
+fig.tight_layout(pad = 0.2)
+fig.subplots_adjust(hspace = 0.1, bottom = 0.1)
+
+# %% Use logistic directly
+using DynamicalSystems, PyPlot
+lo = Systems.logistic(0.4)
+rc = 1 + sqrt(8)
+rs = [rc, rc - 0.0001, rc - 0.001]
+# rs = range(rc; step = -0.0001, length = 3)
+
+chaoticphases = (
+[],
+[27:42, 141:152, 170:200],
+[0:6, 33:50, 55:76, 83:89, 113:145, 161:200]
+)
+
+fig, axs = subplots(length(rs), 1; sharex = true)
+T = 200
+dt = 0.05
+for i in 1:length(rs)
+	set_parameter!(lo, 1, rs[i])
+	x = trajectory(lo, T; Ttr = 100)
+	axs[i].plot(x; lw = 0.5, marker = "o")
+	for idx in chaoticphases[i]
+		axs[i].plot(idx, x[idx .+ 1]; lw = 0.5, marker = "o", color = "C2")
+	end
+
+	axs[i].set_yticks([])
+	# axs[i].text(0.99, 0.90, "\$r=$(rs[i])\$"; bbox = bbox,
+	# transform = axs[i].transAxes, va = :top, ha=:right, fontsize = 22)
+end
+# axs[1].set_xlim(0, T)
+axs[1].set_xlim(0, T)
+add_identifiers!(fig; yloc = 0.8)
+fig.tight_layout(pad = 0.25)
+fig.subplots_adjust(hspace = 0.1, bottom = 0.1)
+wsave(plotsdir("intermittency"), fig)

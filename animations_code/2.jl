@@ -6,7 +6,7 @@ using AbstractPlotting.MakieLayout
 
 # %% Fitzhugh clickable phase space
 a = 3.
-b = 0.2
+b = -0.05
 ε = 0.01
 I = 0.0
 
@@ -18,6 +18,7 @@ ax = layout[1,1] = LAxis(scene)
 display(scene)
 ax.xlabel = "u"
 ax.ylabel = "w"
+ax.title = "FitzHugh Nagumo, a=$a, b=$b"
 
 # plot the two nullclines
 us = -0.4:0.01:1.2
@@ -30,7 +31,9 @@ lines!(ax, us, w2; color = COLORS[2], linewidth = 2, linestyle = :dot)
 spoint = select_point(ax.scene)
 on(spoint) do pos
     tr = trajectory(fh, 10000, SVector(pos...))
-    lines!(ax, columns(tr)...; color = InteractiveChaos.randomcolor())
+    lines!(ax, columns(tr)...;
+        color = InteractiveChaos.randomcolor(), linewidth = 4.0
+    )
 end
 
 # %% orbit evolution in a 2D torus

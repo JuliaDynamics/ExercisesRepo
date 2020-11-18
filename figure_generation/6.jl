@@ -3,33 +3,27 @@ using DrWatson
 include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot, Random
 
-# %% showing embedding
+# %% Using Cao's method to estimate embedding
 lo = Systems.lorenz([0, 10, 0.0])
 
-tr = trajectory(lo, 1000; Ttr=100)
+tr = trajectory(lo, 1000; Ttr=10)
 x, y, z = columns(tr)
-w = @. x
-τ = estimate_delay(w, "mi_min")
-ψ = @. z - y
+fig = figure(figsize=(figx/2, figy));
+w = x
+ψ = z .- y
 
-# figure for Cao's method
-fig = figure(figsize=(figx/2.5, figx/2.5));
 for (s, l) in zip((w, ψ), ("\$w=x\$", "\$w=z-y\$"))
     τ = estimate_delay(s, "mi_min")
-    Ds = estimate_dimension(s, τ, 1:6, "afnn")
-    plot(2:7, Ds, marker = "o", label = l)
+    Ed = delay_afnn(s, τ, 2:7)
+    plot(2:7, Ed, marker = "o", label = l)
 end
-xticks(2:7)
-xlabel("\$d\$")
+
+xlabel("\$d\$"; labelpad = -10)
 ylabel("\$E_{d}\$")
 legend(title="measurement")
-fig.tight_layout(pad = 0.1)
-# fsave(joinpath(figdir, "caodemonstration"), fig)
-
-# boxes = 10 .^ (-3:0.2:1)
-# D_A = generalized_dim(0.0, tr, boxes)
-# D_R = generalized_dim(0.0, R, boxes)
-# @show (D_A, D_R)
+fig.tight_layout(pad = 0.4)
+fig.subplots_adjust(left = 0.15, bottom = 0.15)
+wsave(plotsdir("caodemonstration"), fig)
 
 # %%
 γ = 2
