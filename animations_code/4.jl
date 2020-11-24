@@ -133,3 +133,16 @@ on(f3button.clicks) do click
 end
 
 display(scene)
+
+# %% Interactive orbit diagram for logistic map
+using InteractiveChaos, Makie
+using DynamicalSystems
+
+ds = Systems.logistic()
+p_min, p_max = 1.0, 4.0
+t = "orbit diagram for the logistic map"
+
+oddata = interactive_orbitdiagram(
+    ds, 1, p_min, p_max, 1;
+    parname = "r", title = t
+)

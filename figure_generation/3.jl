@@ -2,13 +2,11 @@ using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("style.jl"))
 
-
-
 # %% sensitive dependence
 using DynamicalSystems, PyPlot, Random
 Random.seed!(5)
 close("all")
-fig = figure(figsize=(2figx/3, figx/2))
+fig = figure(figsize=(figx/2, figy))
 ax = gca()
 u0 = [10,10.0,10]
 lo = Systems.lorenz([10,10.0,10])
@@ -22,58 +20,10 @@ end
 xlabel("\$t\$",labelpad = -10)
 yticks(-15:10:15)
 xticks(0:5:15)
-ylabel("\$x\$",labelpad = -15)
-tight_layout()
+ylabel("\$x\$",labelpad = -20)
+tight_layout(pad = 0.25)
 subplots_adjust(bottom = 0.15, left = 0.12)
-fsave(joinpath(figdir, "sensitive"), fig)
-
-# %% stretching and folding for logistic
-lo = Systems.logistic()
-X = trajectory(lo, 1000, Ttr = 100)
-# close("all")
-fig = figure()
-# ax = subplot2grid((1,3), (0,0))
-ax = subplot(121)
-ax.scatter(X[1:end-1], X[2:end], color = COLORS[1], s = 5, label = "\$x_{i+2}\$")
-ax.set_xlabel("\$x_{i}\$")
-ax.set_yticks([0, 0.5, 1])
-ax.scatter(X[1:end-2], X[3:end], color = COLORS[2], s = 5, label = "\$x_{i+2}\$")
-ax.legend(markerscale = 5)
-
-using3D()
-# ax2 = subplot2grid((1,3), (0,1), projection = "3d", colspan = 2)
-ax2 = subplot(122, projection = "3d")
-ax2.scatter(X[1:end-2], X[2:end-1], X[3:end], color = COLORS[1], s = 5)
-
-ax2.set_xticklabels([])
-ax2.set_yticklabels([])
-ax2.set_zticklabels([])
-ax2.set_xlabel("\$x_{i}\$", labelpad = -10)
-ax2.set_ylabel("\$x_{i+1}\$", labelpad = -10)
-ax2.set_zlabel("\$x_{i+2}\$", labelpad = -10)
-
-# fold arrow
-s = (0.15, 0.5, 1.2)
-e = (0.85, 0.5, 1.2)
-ax2.quiver3D(e..., (s .- e)..., color = COLORS[3])
-ax2.text3D(0.5, 0.1, 1.2, "Fold", color = COLORS[3])
-
-# stretch arrow
-s = (0.75, 0.35, 0.9)
-e = (0.95, 0.15, 0.1)
-ax2.quiver3D(e..., (s .- e)..., color = COLORS[5])
-
-s = (0.55, 0.45, 0.1)
-e = (0.75, 0.35, 0.9)
-ax2.quiver3D(e..., (s .- e)..., color = COLORS[5])
-ax2.text3D(1.1, 0.45, 0.1, "Stretch", color = COLORS[5])
-
-
-tight_layout()
-fig.subplots_adjust(top = 0.95, wspace = 0.1)
-add_identifiers!(fig)
-savefig(joinpath(@__DIR__, "stretching.png"))
-
+wsave(plotsdir("sensitive"), fig)
 
 # %% Folding in henon map
 a = 1.4; b = 0.3
@@ -132,10 +82,10 @@ for ax in (ax1, ax2, ax3, ax4)
     ax.set_xlabel("\$x\$", labelpad = -10)
     # ax.legend(markerscale = 4, scatterpoints=1)
 end
-tight_layout()
-subplots_adjust(left = 0.05, bottom = 0.1, wspace = 0.1)
-add_identifiers!(fig; xloc = 0.01)
-# savefig(joinpath(figdir, "stretchinghenon"))
+tight_layout(pad = 0.25)
+subplots_adjust(left = 0.04, bottom = 0.1, wspace = 0.1, top = 0.9)
+add_identifiers!(fig; xloc = 0.0)
+wsave(plotsdir("stretchinghenon"), fig)
 
 # %% definition of lyapunov
 using LinearAlgebra
@@ -146,24 +96,23 @@ X₂ = trajectory(he, 50, u₂)
 δ  = norm.(X₂.data .- X₁.data)
 λ = lyapunov(he, 10000)
 
-close("all")
-figure(figsize=(figx/2,figx/4))
+fig = figure(figsize=(figx/2,2figy/3))
 ax = gca()
 ax.plot(0:50, log.(δ), c = COLORS[1], label ="\$\\ln(\\delta(n)))\$")
 ax.set_yticks(-12:4:0)
-ax.set_xlabel("\$n\$", labelpad=-10)
+ax.set_xlabel("\$n\$", labelpad=-20)
 # Lyapunov
 ax.plot([0, 25] .+ 5, λ .* [0, 25] .- 13, color = COLORS[2])
 ax.text(20, -9, "\$\\lambda\$=$(round(λ;digits=2))", color = COLORS[2])
-ax.legend()
-xticks(0:15:50)
-tight_layout()
+ax.legend(;handlelength = 1.0)
+xticks(0:20:50)
+tight_layout(pad = 0.25)
 subplots_adjust(bottom = 0.2, left = 0.12)
-savefig(joinpath(figdir, "lyapunov"))
+wsave(plotsdir("lyapunov"), fig)
 
 # %% gali map
 using DynamicalSystems, PyPlot
-figure()
+fig = figure(figsize = (figx/2, figy))
 hh = Systems.henonheiles()
 ics = Systems.henonheiles_ics(0.13, 10)
 cmap = matplotlib.cm.get_cmap("viridis")
@@ -171,7 +120,7 @@ for ic in ics
     psos = poincaresos(hh, (1, 0.0), 10000; u0 = ic)
     GALI, t = gali(hh, 1000, 4; u0 = ic)
     v = clamp(t[end]/1000, 0, 1)
-    scatter(psos[:, 2], psos[:, 4], color = cmap(v), s = 2)
+    scatter(psos[:, 2], psos[:, 4], color = cmap(v), s = 1)
 end
 
 cb = colorbar()
@@ -180,7 +129,7 @@ xlabel("\$y\$", labelpad = -10)
 yticks(-0.5:0.3:0.5)
 ylabel("\$p_y\$", labelpad = -10)
 cb.set_ticks([0, 1])
-cb.set_label("regularity")
-tight_layout()
-subplots_adjust(bottom = 0.15, top = 0.95, left = 0.1, wspace = 0.01)
-savefig(joinpath(figdir, "gali.png"))
+cb.set_label("regularity", labelpad = -15)
+tight_layout(; pad = 0.25)
+subplots_adjust(bottom = 0.16, top = 0.95, left = 0.15, wspace = 0.01)
+wsave(plotsdir("gali"), fig)
