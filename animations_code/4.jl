@@ -44,16 +44,16 @@ on(ε_observable) do ε
     rootcols[] = s
 end
 
-# TODO:
-# Logistic map timeseries (left panel) and f, f^2 (right panel)
-# with slider for r value below them.
-# %%
+# %% Logistic map cobweb and timeseries
 scene, layout = layoutscene(resolution = (1000, 800))
 
 axts = layout[1, :] = LAxis(scene)
 axmap = layout[2, :] = LAxis(scene)
 
+# `rrange` decides the r-slider values.
+# the second range is a convenience for intermittency
 rrange = 1:0.001:4.0
+# rrange = (rc = 1 + sqrt(8); [rc, rc - 1e-5, rc - 1e-2])
 
 sll = labelslider!(scene, "r =", rrange)
 layout[3, :] = sll.layout

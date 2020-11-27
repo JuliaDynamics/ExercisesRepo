@@ -64,7 +64,7 @@ fig.tight_layout()
 fig.subplots_adjust(top = 0.95, wspace = 0.1)
 
 
-# %%
+# %% 01-test for chaos for standard map
 using Statistics
 sm = Systems.standardmap(;k = 1.0)
 u1 = 0.1rand(2)
@@ -85,7 +85,7 @@ axs[1, 2].set_title("process \$(p_n, q_n)\$")
 axs[1, 3].set_title("sq. displ. \$Z_n\$")
 fig.tight_layout(;pad = 0.25)
 
-# %%
+# %% 01-test chaos for henon heiles
 using Statistics
 sm = Systems.henonheiles()
 u0s = (
@@ -109,10 +109,7 @@ axs[1, 2].set_title("process \$(p_n, q_n)\$")
 axs[1, 3].set_title("sq. displ. \$Z_n\$")
 fig.tight_layout(;pad = 0.25)
 
-
 # %% Interactive GALI psos for henon heiles
-# TODO: I need to fix PSOS to not autozoom.
-
 using InteractiveChaos, Makie, OrdinaryDiffEq, DynamicalSystems
 diffeq = (alg = Vern9(), abstol = 1e-9, reltol = 1e-9)
 
@@ -134,14 +131,15 @@ end
 plane = (1, 0.0) # first variable crossing 0
 
 cmap = cgrad(:viridis)
-function galicolor(u)
-    g, t = gali(hh, 4000, 4; u0 = u)
-    v = clamp(t[end]/500, 0, 1)
-    # return cmap.colors[round(Int, v*255 + 1)]
-    RGBf0(v/2, 0, v)
+function λcolor(u)
+    λ = lyapunov(hh, 10000; u0 = u, diffeq...)
+    λmax = 0.06
+    v = clamp(λ/λmax, 0, 1)
+    return cmap.colors[round(Int, v*255 + 1)]
+    # RGBf0(v/2, 0, v)
 end
 
 state, scene = interactive_poincaresos(
     hh, plane, (2, 4), complete;
-    labels = ("q₂" , "p₂"), color = galicolor, diffeq...
+    labels = ("q₂" , "p₂"), color = λcolor, diffeq...
 )
