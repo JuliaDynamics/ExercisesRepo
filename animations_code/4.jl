@@ -55,16 +55,25 @@ axmap = layout[2, :] = LAxis(scene)
 rrange = 1:0.001:4.0
 # rrange = (rc = 1 + sqrt(8); [rc, rc - 1e-5, rc - 1e-2])
 
-sll = labelslider!(scene, "r =", rrange)
-layout[3, :] = sll.layout
-r_observable = sll.slider.value
+slr = labelslider!(scene, "r =", rrange)
+layout[3, :] = slr.layout
+r_observable = slr.slider.value
+
+sln = labelslider!(scene, "n =", 10:1000)
+layout[4, :] = sln.layout
+L = sln.slider.value
 
 # Timeseries plot
-L = 100 # length of timeseries to be plotted
+function seriespoints(x)
+    n = 0:length(x)+1
+    c = [Point2f0(n[i], x[i]) for i in 1:length(x)]
+end
+
 lo = Systems.logistic(0.4; r=rrange[1])
-x = Observable(trajectory(lo, L))
-lines!(axts, 0:L, x; color = COLORS[1], lw = 2.0)
-scatter!(axts, 0:L, x; color = COLORS[1], markersize = 5)
+x = Observable(trajectory(lo, L[]))
+xn = lift(a -> seriespoints(a), x)
+lines!(axts, xn; color = COLORS[1], lw = 2.0)
+scatter!(axts, xn; color = COLORS[1], markersize = 5)
 ylims!(axts, 0, 1)
 
 # Cobweb diagram
@@ -92,7 +101,7 @@ function cobweb(t) # transform timeseries x into cobweb (point2D)
     return c
 end
 
-cobs = Observable(cobweb(x[]))
+cobs = lift(a -> cobweb(a), x)
 ccurve = lines!(axmap, cobs; color = COLORS[1])
 cscatter = scatter!(axmap, cobs; color = COLORS[1], markersize = 2)
 
@@ -102,19 +111,20 @@ ylims!(axmap, 0, 1)
 # On trigger r-slider update all plots:
 on(r_observable) do r
     set_parameter!(lo, 1, r)
-    x[] = trajectory(lo, L)
-    f1obs[] = f1.(xs, r)
-    f2obs[] = f2.(xs, r)
-    f3obs[] = f3.(xs, r)
-    cobs[] = cobweb(x[])
+    x[] = trajectory(lo, L[])
 end
 
-# Finally add three buttons to hide/show elements of the plot
+on(L) do l
+    x[] = trajectory(lo, l)
+    xlims!(axts, 0, l)
+end
+
+# Finally add buttons to hide/show elements of the plot
 f1button = LButton(scene; label = "f")
 f2button = LButton(scene; label = "f²")
 f3button = LButton(scene; label = "f³")
 cbutton = LButton(scene; label = "cobweb")
-layout[4, :] = buttonlayout = GridLayout(tellwidth = false)
+layout[5, :] = buttonlayout = GridLayout(tellwidth = false)
 buttonlayout[:, 1:4] = [f1button, f2button, f3button, cbutton]
 
 # And add triggering for buttons
