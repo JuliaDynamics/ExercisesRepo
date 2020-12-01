@@ -394,3 +394,41 @@ add_identifiers!(fig; yloc = 0.8)
 fig.tight_layout(pad = 0.25)
 fig.subplots_adjust(hspace = 0.1, bottom = 0.1)
 wsave(plotsdir("intermittency"), fig)
+
+
+# %% Intermittency in standard map
+using DynamicalSystems, PyPlot
+ds = Systems.standardmap(;k = 1.2)
+u = [2.2, 2.4]
+
+tr = trajectory(ds, 50000, u)
+fig, axs = subplots(1, 2; sharey = true)
+θ, p = columns(tr)
+n = 0:length(p)-1
+axs[1].plot(n, p; marker = "o", ms = 2, lw = 0.5)
+scp = axs[2].scatter(θ, p;
+	s = 2, c = n, alpha = 1, edgecolors = "0.5", linewidths = 0.0, cmap = :binary_r,
+)
+
+add_identifiers!(fig)
+
+xt = 0:10000:50000
+xtl = ["10$(n)" for n in ["⁰", '¹', '²', '³', '⁴', '⁵']]
+cb = colorbar(scp; ticks = xt)
+cb.ax.set_yticklabels(xtl)
+cb.set_label("\$n\$", labelpad = 15, rotation = 0)
+# intermittency ranges explicit plot
+r1 = 1:2700
+r2 = 32080:33310
+for (i, r) in enumerate((r1, r2))
+	axs[1].plot(n[r], p[r]; marker = "o", ms = 2, lw = 0.5, color = "C$(i)")
+	axs[2].scatter(θ[r], p[r]; marker = "o", s = 4, color = "C$(i)")
+end
+axs[1].set_xticks(xt)
+axs[1].set_xticklabels(xtl)
+axs[1].set_ylabel("\$p\$")
+axs[1].set_xlabel("\$n\$", labelpad = -15)
+axs[2].set_xlabel("\$\\theta\$", labelpad = -15)
+
+fig.tight_layout(pad = 0.25)
+wsave(plotsdir("intermittency2"), fig)

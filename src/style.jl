@@ -72,7 +72,7 @@ end
 bbox = Dict(:boxstyle => "round,pad=0.3", :facecolor=>"white", :alpha => 1.0)
 
 "`add_identifiers!(fig = gcf(), axs = fig.get_axes(); xloc = 0.985, yloc = 0.975)`"
-function add_identifiers!(fig = gcf(), axs = fig.get_axes(); xloc = 0.985, yloc = 0.975)
+function add_identifiers!(fig = gcf(), axs = fig.get_axes(); xloc = 0.975, yloc = 0.925)
     bbox = Dict(:boxstyle => "round,pad=0.3", :facecolor=>"white", :alpha => 1.0)
     for (i, ax) in enumerate(axs)
         l = collect('a':'z')[i]

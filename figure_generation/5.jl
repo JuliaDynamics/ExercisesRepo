@@ -62,20 +62,20 @@ fig.subplots_adjust(top = 0.9, bottom = 0.02, right = 0.95, left = 0.05, wspace=
 
 
 # %% Koch snowflake
-linepoints = [[0.0; 0.0], [1.0; 0.0]]
-flakepoints = [[0.0; 0.0], [0.5; sqrt(3)/2], [1; 0.0], [0.0; 0.0]]
+linepoints = SVector{2}.([[0.0; 0.0], [1.0; 0.0]])
+flakepoints = SVector{2}.([[0.0; 0.0], [0.5; sqrt(3)/2], [1; 0.0], [0.0; 0.0]])
 function koch(points, maxk, α = sqrt(3)/2)
-  Q = [0 -1; 1 0]
+  Q = @SMatrix [0 -1; 1 0]
   for k = 1:maxk
     n = length(points)
-    new_points = Vector{Float64}[]
+    new_points = eltype(points)[]
     for i = 1:n-1
       p1, p2 = points[i], points[i+1]
       v = (p2 - p1) / 3
       q1 = p1 + v
       q2 = p1 + 1.5v + α * Q * v
       q3 = q1 + v
-      append!(new_points, [p1, q1, q2, q3])
+      push!(new_points, p1, q1, q2, q3)
     end
     push!(new_points, points[end])
     points = new_points
@@ -84,7 +84,7 @@ function koch(points, maxk, α = sqrt(3)/2)
 end
 
 # Plot construction
-fig, axes = subplots(2,3, figsize = (2figx/3,figx/2 - 2))
+fig, axes = subplots(2,3, figsize = (figx, 2figy))
 toprow = axes[1:2:5]
 botrow = axes[2:2:6]
 
@@ -116,19 +116,21 @@ for i in 1:3
     kx, ky = [a[1] for a in largekoch], [a[2] for a in largekoch]
     botrow[i].plot(kx, ky, lw = 0.5)
     botrow[i].set_aspect("equal")
-    botrow[i].add_artist(plt.Circle((0.5,0.28900), 0.5, lw=2.0, color="C1", alpha = 0.75, fill=false))
+    botrow[i].add_artist(plt.Circle(
+        (0.5,0.28900), 0.5, lw=2.0, color="C1", alpha = 0.75, fill=false
+    ))
     botrow[i].axis("off")
 end
 for i in 1:2
     origin = botrow[i]
     zoomin = botrow[i+1]
     zbox = allpoints[i+1]
-    axis_zoomin!(zoomin, origin, zbox, zbox, "C$(i+1)", 0.4)
+    axis_zoomin!(zoomin, origin, zbox, zbox, "C$(i+1)"; α = 0.5)
 end
 
-fig.tight_layout()
-fig.subplots_adjust(wspace = 0.01, hspace = 0.01, bottom = 0.05, left = 0.05)
-fsave(joinpath(figdir, "koch"), fig)
+fig.tight_layout(pad = 0.1)
+fig.subplots_adjust(wspace = 0.01, hspace = 0.01, bottom = 0.01, left = 0.01)
+# save(plotsdir("koch"), fig)
 
 # %% Henon fractal zoom
 fig, axes = subplots(1,3, figsize = (figx,figx/4))
