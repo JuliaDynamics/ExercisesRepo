@@ -8,3 +8,4 @@
 8 = oscillatory ARMA, embedded in 4d
 9 = 6dimensional Lorenz96 with 2% AR noise - Periodic or Quasiperiodic (don't know!)
 10 = 5dimensional Lorenz96 with 2% AR noise - Chaotic trajectory
+11 = Hemispherically averaged, monthly averaged, reflected short radiation, obtained from CERES data: https://ceres.larc.nasa.gov/data/
