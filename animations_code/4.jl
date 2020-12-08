@@ -70,3 +70,32 @@ oddata = interactive_orbitdiagram(
     ds, 1, p_min, p_max, 1;
     parname = "r", title = t
 )
+
+# %% Cobweb for pomeaumannevile
+using InteractiveChaos, Makie
+using DynamicalSystems
+
+using DynamicalSystems, PyPlot
+function pm_f(x, p, n)
+	γ, z = p
+	s =  -2(γ+1)
+    if x < -0.5
+		s*(x+0.5) - γ
+        # -4x - 3
+    elseif -0.5 ≤ x ≤ 0.5
+        @inbounds γ*x*(1 + abs(2x)^(z-1))
+    else
+        s*(x-0.5) + γ
+    end
+end
+
+rs = 0.7:0.01:1
+ds = DiscreteDynamicalSystem(pm_f, 0.3, [rs[1], 2.6])
+
+interactive_cobweb(
+    ds, rs, 1;
+    trajcolor = COLORS[1],
+    fkwargs = [(linewidth = 4.0, color = COLORS[i+1]) for i in 1:3],
+	xmin = -1,
+	xmax = 1
+)

@@ -72,11 +72,12 @@ end
 bbox = Dict(:boxstyle => "round,pad=0.3", :facecolor=>"white", :alpha => 1.0)
 
 "`add_identifiers!(fig = gcf(), axs = fig.get_axes(); xloc = 0.985, yloc = 0.975)`"
-function add_identifiers!(fig = gcf(), axs = fig.get_axes(); xloc = 0.975, yloc = 0.925)
+function add_identifiers!(fig = gcf(), axs = fig.get_axes(); xloc = 0.975, yloc = 1)
     bbox = Dict(:boxstyle => "round,pad=0.3", :facecolor=>"white", :alpha => 1.0)
     for (i, ax) in enumerate(axs)
         l = collect('a':'z')[i]
-        ax.text(xloc, yloc, "$(l)"; transform = ax.transAxes, bbox = bbox, zorder = 99)
+        ax.text(xloc, yloc, "$(l)"; transform = ax.transAxes,
+        bbox = bbox, zorder = 99, va = "top")
     end
 end
 
@@ -91,14 +92,19 @@ function coolfill!(ax, x, y, dy, c, label = "")
 end
 
 function nice_arrow!(ax, xc, yc, xspan, yspan;
-    style = "<->", tex = "", xo = 0.2, yo = -0.2)
-    ax.annotate("",  xy=(xc-xspan/2, yc - yspan/2), xycoords="data",
-                xytext=(xc+xspan/2, yc + yspan/2), textcoords="data",
-                arrowprops = (Dict(:arrowstyle=>style,
-                                :connectionstyle=>"arc3",
-                                :lw=>1.5, :facecolor => "black")), zorder = 99)
+    style = "<->", tex = "", xo = 0.2, yo = -0.2, color = "C0")
+
+    ax.annotate("";
+        xy=(xc-xspan/2, yc - yspan/2), xycoords="data",
+        xytext=(xc+xspan/2, yc + yspan/2), textcoords="data",
+        arrowprops = Dict(
+            :arrowstyle=>style,
+            :connectionstyle=>"arc3",
+            :lw=>1.5, :color => color),
+        zorder = 99, color
+    )
     if tex != ""
-        ax.text(xc + xo, yc + yo, tex, size = 24)
+        ax.text(xc + xo, yc + yo, tex; va = :center, color)
     end
 end
 
@@ -130,21 +136,25 @@ is the small "zoom-in" box of the `origin` axis. They must be in the form
 ((x1, y1), (x2, y2)). `co` is color `α` the alpha setting.
 """
 function axis_zoomin!(zoomin, origin, zbox, rbox, co = "C0";
-    connect_lines = true, lw = 2.0, α = 1.0)
+    connect_lines = true, lw = 2.0, α = 1.0, dir = :right)
     # plot box in zoomin axis
     line, = zoomin.plot(
-    [rbox[1][1], rbox[2][1], rbox[2][1], rbox[1][1], rbox[1][1]],
-    [rbox[1][2], rbox[1][2], rbox[2][2], rbox[2][2], rbox[1][2]],
-    color=co,  lw = lw, alpha = α)
+        [rbox[1][1], rbox[2][1], rbox[2][1], rbox[1][1], rbox[1][1]],
+        [rbox[1][2], rbox[1][2], rbox[2][2], rbox[2][2], rbox[1][2]],
+        color=co, lw = lw, alpha = α
+    )
     line.set_clip_on(false)
-
+    # plot box in origin axis
     line, = origin.plot(
-    [zbox[1][1], zbox[2][1], zbox[2][1], zbox[1][1], zbox[1][1]],
-    [zbox[1][2], zbox[1][2], zbox[2][2], zbox[2][2], zbox[1][2]],
-    color=co,  lw = lw, alpha = α)
+        [zbox[1][1], zbox[2][1], zbox[2][1], zbox[1][1], zbox[1][1]],
+        [zbox[1][2], zbox[1][2], zbox[2][2], zbox[2][2], zbox[1][2]],
+        color=co, lw = lw, alpha = α
+    )
     line.set_clip_on(false)
 
+    # xyA is zoomin axis, xyB is origin axis
     if connect_lines
+    if dir == :right
     for e in 1:2
         con = matplotlib.patches.ConnectionPatch(
         xyA = (rbox[1][1], rbox[e][2]), xyB=(zbox[2][1], zbox[e][2]),
@@ -152,6 +162,16 @@ function axis_zoomin!(zoomin, origin, zbox, rbox, co = "C0";
         axesA = zoomin, axesB=origin, color=co, lw = lw, alpha = α)
         con.set_clip_on(false)
         zoomin.add_artist(con)
+    end
+    elseif dir == :top
+        for e in 1:2
+            con = matplotlib.patches.ConnectionPatch(
+            xyA = (rbox[e][1], rbox[1][2]), xyB=(zbox[e][1], zbox[2][2]),
+            coordsA="data", coordsB="data",
+            axesA = zoomin, axesB=origin, color=co, lw = lw, alpha = α)
+            con.set_clip_on(false)
+            zoomin.add_artist(con)
+        end
     end
     end
 end

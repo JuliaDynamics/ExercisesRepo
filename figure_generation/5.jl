@@ -225,7 +225,7 @@ fig.subplots_adjust(left=0.14, bottom = 0.15, hspace = 0.1)
 # fsave(joinpath(figdir, "dimension"), fig)
 
 
-# %% add
+# %% Henon gridding for dimension explanation
 fig = figure()
 ax = subplot(1,2,1)
 ax2 = subplot(1,2,2)
@@ -246,12 +246,12 @@ for (i, e) ∈ enumerate(es)
             ax.axhline(y; color = "k", lw = 0.5, alpha = 1/(3^i))
         end
     end
-    p, bins = binhist(e, tr)
+    p, bins = binhist(tr, e)
     for b in bins
         r = matplotlib.patches.Rectangle(b, e, e; color = "C$i", ec = "k", lw = 1/i)
         ax.add_artist(r)
     end
-    ns[i] = length(non0hist(e, tr))
+    ns[i] = length(probabilities(tr, e))
 end
 
 ax.plot(tr[:, 1], tr[:, 2], ls = "None", marker = ".", color = COLORS[1], ms = 1, zorder = 99)
@@ -260,12 +260,56 @@ ax.set_ylabel("\$y\$")
 ax.set_xticks([])
 ax.set_xlabel("\$x\$")
 
-ax2.scatter(log.(1 ./ es), log.(ns); c = ["C$i" for i in 1:length(es)], s = 200)
+ax2.scatter(log.(1 ./ es), log.(ns); c = ["C$i" for i in 1:length(es)], s = 200, zorder = 99)
 s = linreg(log.(1 ./ es), log.(ns))[2]
 ax2.plot(log.(1 ./ es), log.(1 ./ es) .* s .+ 2, color = "C0")
 ax2.text(3.5, 6, "\$\\Delta = $(rdspl(s))\$"; color = "C0")
-ax2.set_xlabel("\$\\log ( 1/\\varepsilon)\$")
-ax2.set_ylabel("\$\\log ( N)\$")
-fig.tight_layout()
-fig.subplots_adjust(left=0.05, bottom = 0.2, right = 0.98, top = 0.98, wspace = 0.2)
+ax2.set_xlabel("\$\\log ( 1/\\varepsilon)\$"; labelpad = -15)
+ax2.set_ylabel("\$\\log ( M)\$")
+ax2.set_xticks([2, 3, 4])
+ax2.set_xticklabels([2, "", 4])
+fig.tight_layout(pad = 0.25)
+fig.subplots_adjust(wspace = 0.2)
 wsave(plotsdir("henon_gridding"), fig)
+
+# %% Noise radius illustration using e.g. Poincare section
+using DynamicalSystems, PyPlot
+using Printf
+
+ro = Systems.roessler([0.1,0.2,0.1])
+fig, axs = subplots(2, 1; figsize = (0.4*figx, 1.5figy))
+plane = (2, 0.0)
+
+err = (1e-3, 1e-12)
+εs = 10 .^ (-5:0.5:1)
+
+for (i, e) ∈ enumerate(err)
+    p = poincaresos(
+        ro, plane, 10000; Ttr = 100.0,
+        rootkw = (xrtol = e, atol = e)
+    )
+
+    x=@sprintf("%.1E", e)
+
+    axs[1].scatter(p[:, 1], p[:, 3]; s = 20, alpha = 0.75/i^2,
+    label = "tol = $x")
+    Cs = correlationsum(p, εs)
+    axs[2].plot(log.(εs), log.(Cs ./ maximum(Cs)))
+end
+
+axs[1].set_xlabel("\$x\$";labelpad = -15)
+axs[1].set_ylabel("\$z\$")
+axs[1].legend(markerscale = 5, fontsize=26)
+
+axs[2].plot([-9, 0], 0.9 .* [-9, 0]; ls = "--", color = "C1")
+axs[2].text(-7, -4, "0.9"; color = "C1")
+axs[2].plot([-6, -3], 2.0 .* [-6, -3] .- 2; ls = "--", color = "C0")
+axs[2].text(-3, -11, "2"; color = "C0")
+axs[2].set_ylabel("\$\\log(C)\$"; labelpad = -10)
+axs[2].set_xlabel("\$\\log(\\varepsilon)\$"; labelpad = -15)
+axs[2].set_xticks(-12:5:2)
+axs[2].set_yticks(-14:5:2)
+
+fig.tight_layout(pad = 0.5)
+add_identifiers!(fig)
+wsave(plotsdir("fractaldim_noise"), fig)

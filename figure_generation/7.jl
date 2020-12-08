@@ -4,32 +4,36 @@ include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot, Random
 
 # %% mutual information
-using DynamicalSystems, PyPlot
-using InformationMeasures, Random
-MI = get_mutual_information #shortcut
+include(srcdir("mutualinfo.jl"))
+using DynamicalSystems, PyPlot, Random
+Random.seed!(567718989)
 lo, N = Systems.logistic(), 100
 x = trajectory(lo, N-1)
 y = trajectory(lo, N-1; Ttr = 1)
 x .+= randn(N)/25; y .+= randn(N)/25
-m = MI(x, y)
-null = [MI(shuffle!(x), shuffle!(y))
-        for _ in 1:10000]
+m, null = mutualinfoshuffle(x, y, 0.1)
+# verbose version
+# m = mutualinfo(x, y, 0.1)
+# null = [mutualinfo(
+#     shuffle!(x), shuffle!(y), 0.1)
+#     for _ in 1:10_000
+# ]
 
 # plot stuff
-fig = figure(figsize = (0.9figx/2, 0.8figx/2))
+fig, ax = subplots(;figsize = (figx/3, figy))
 using Statistics
 μ, σ = mean(null), std(null)
-plt.hist(null, 50, label = "null pdf")
-axvline(μ, color = "C1", label = "\$\\mu\$", ls = "dashed")
-axvline(μ-3σ, color = "C2", label = "\$\\mu \\pm 3\\sigma\$", ls = "dashed")
-axvline(μ+3σ, color = "C2", ls = "dashed")
-axvline(m, color = "C3", label = "\$m\$")
-
-legend(framealpha = 1.0, loc = "upper right")
-yticks([])
-xlabel("mutual information (bits)")
-tight_layout()
-# fsave(joinpath(figdir, "mutualinfo"), fig)
+ax.hist(null, 50, label = "null pdf")
+ax.axvline(μ, color = "C1", label = "\$\\mu\$", ls = "dashed")
+ax.axvline(μ-3σ, color = "C2", label = "\$\\mu \\pm 3\\sigma\$", ls = "dashed")
+ax.axvline(μ+3σ, color = "C2", ls = "dashed")
+ax.axvline(m, color = "C3", label = "\$m\$")
+ax.legend(framealpha = 1.0, loc = "upper right")
+ax.set_yticks([])
+ax.set_xticks([])
+ax.set_xlabel("mutual inform. (a. u.)")
+fig.tight_layout(;pad = 0.25)
+# wsave(plotsdir("mutualinfo"), fig)
 
 # %% transfer entropy
 using DynamicalSystems, CausalityTools, PyPlot, Random
