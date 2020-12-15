@@ -11,3 +11,6 @@
 11 = Hemispherically averaged, monthly averaged, reflected shortwave radiation, obtained from CERES data: https://ceres.larc.nasa.gov/data/
 12 = Experimental timeseries of chaotic electrochemical oscillations from Ref: https://arxiv.org/abs/2011.07040
 13 = Same as 12 but slightly different experimental conditions
+14 = Dataset 93 of https://webdav.tuebingen.mpg.de/cause-effect/ (citation = J. M. Mooij, J. Peters, D. Janzing, J. Zscheischler, B. Schoelkopf:
+"Distinguishing cause from effect using observational data: methods and benchmarks"). First column of data is average precipitation over 1948 to 2004 in mm/day, second is average runoff
+15 = Same as 14, but dataset 73: first column is CO2 emissions, second column is energy use (kg of oil equivalent)
