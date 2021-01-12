@@ -123,3 +123,23 @@ title("delay embedding")
 tight_layout()
 subplots_adjust(wspace = 0.05, left = 0.025, right = 0.975)
 fsave(joinpath(figdir, "broomhead"), fig)
+
+# %% Comparison of fractal dim of embedding and reconstruction
+ds = Systems.lorenz()
+A = trajectory(ds, 500; dt = 0.05, Ttr = 1000)
+x = A[:, 1]
+τ = estimate_delay(x, "mi_min")
+d = 3 # embedding dimension = 3, we know it already
+R = embed(x, d, τ)
+εs = MathConstants.e .^ (-5:0.5:4)
+CA = correlationsum(A, εs)
+CR = correlationsum(R, εs)
+
+e = log.(εs)
+fig = figure(figsize = (figx/2, figy))
+PyPlot.plot(e, log.(CA); label = "original", color = "C1")
+PyPlot.plot(e, log.(CR); label = "reconstructed", color = "C2")
+xlabel("\$\\log(\\varepsilon)\$")
+ylabel("\$\\log(C)\$")
+PyPlot.legend()
+fig.tight_layout(pad = 0.3)

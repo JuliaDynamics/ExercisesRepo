@@ -24,3 +24,4 @@ COLORSCHEME = [
    "#878787"
 ]
 COLORS = CyclicContainer(COLORSCHEME)
+LINESTYLES = CyclicContainer(["-", ":", "--", "-."])

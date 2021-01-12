@@ -8,7 +8,7 @@
 8 = oscillatory ARMA, embedded in 4d
 9 = 6dimensional Lorenz96 with 2% AR noise - Periodic or Quasiperiodic (don't know!)
 10 = 5dimensional Lorenz96 with 2% AR noise - Chaotic trajectory
-11 = Hemispherically averaged, monthly averaged, reflected shortwave radiation, obtained from CERES data: https://ceres.larc.nasa.gov/data/
+11 = Hemispherically averaged, monthly averaged, de-seasonalized, reflected shortwave radiation, obtained from CERES data: https://ceres.larc.nasa.gov/data/
 12 = Experimental timeseries of chaotic electrochemical oscillations from Ref: https://arxiv.org/abs/2011.07040
 13 = Same as 12 but slightly different experimental conditions
 14 = Dataset 93 of https://webdav.tuebingen.mpg.de/cause-effect/ (citation = J. M. Mooij, J. Peters, D. Janzing, J. Zscheischler, B. Schoelkopf:

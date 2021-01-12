@@ -583,7 +583,7 @@ wsave(plotsdir("intermittency_sm"), fig)
 using DynamicalSystems, PyPlot
 lo = Systems.manneville_simple(0.454)
 
-rs = [-0.1, 0.0001, 0.1]
+rs = [-0.1, 0.0001, 0.05]
 
 fig = figure(figsize = (figx, 1.5figy))
 ax1 = fig.add_subplot(3, 2, 1)
@@ -605,7 +605,7 @@ for i in 1:length(rs)
 	axs[i].plot(regulari .- 1, x[regulari]; ls = "None", marker = "o", color = "C0")
 	axs[i].plot(chaotici .- 1, x[chaotici]; ls = "None", marker = "o", color = "C2")
 	axs[i].set_ylim(-0.1, 1.2)
-	axs[i].set_yticks([])
+	axs[i].set_yticks([0, 1])
 	# axs[i].text(0.99, 0.90, "\$r=$(rs[i])\$"; bbox = bbox,
 	# transform = axs[i].transAxes, va = :top, ha=:right, fontsize = 22)
 end
@@ -614,13 +614,13 @@ for ax in (ax1, ax2); ax.tick_params(labelbottom=false); end
 axs[1].set_xlim(0, T)
 axs[1].set_xticks(0:60:180)
 axs[3].set_xlabel("\$n\$"; labelpad = -25)
-axs[2].set_ylabel("\$x_n\$"; labelpad = 5)
+axs[2].set_ylabel("\$x_n\$"; labelpad = -10)
 axs[2].axvspan(21, 40; color = "C3", alpha = 0.5)
 
 # laminar arrow
 xc = (135 + 169)/2
 xspan = (169 - 135)
-nice_arrow!(ax2, xc, 1.0, xspan, 0; tex = "\$\\ell\$", yo = 0.0, xo = xspan/2)
+nice_arrow!(ax2, xc, 1.0, xspan, 0; tex = "\$\\ell\$", yo = 0.0, xo = -xspan/2 - 5)
 
 xc = (65 + 100)/2
 xspan = abs(65 - 100)
@@ -669,4 +669,4 @@ axi.set_yticks([])
 axc.grid(false)
 
 fig.tight_layout(pad = 0.3)
-# wsave(plotsdir("intermittency_manneville"), fig)
+wsave(plotsdir("intermittency_manneville"), fig)

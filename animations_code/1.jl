@@ -26,7 +26,7 @@ A  = trajectory(lorenz, T; dt)
 # %% Animate evolution of trajectories in the Standard map
 using InteractiveChaos
 using DynamicalSystems
-using Makie
+using GLMakie
 
 # Standard map trajectories
 ds = Systems.standardmap(; k = 1.0)
@@ -43,12 +43,12 @@ main.ylabel = "p"
 using OrdinaryDiffEq: Tsit5, Vern9
 ds = Systems.lorenz()
 
-u0s =  [[10,20,40.0] .+ rand(3) for _ in 1:7]
+u0s =  [[10,20,40.0] .+ rand(3) for _ in 1:6]
 
 diffeq = (alg = Tsit5(), dtmax = 0.01)
 
 scene, main, layout, obs = interactive_evolution(
-    ds, u0s; tail = 1000, diffeq, colors = COLORS,
+    ds, u0s; tail = 1000, diffeq, colors = to_color.(COLORS)
 )
 
 # %% Add poincare plane
@@ -85,3 +85,25 @@ scene, main, layout, obs = interactive_evolution(
     ds, u0s; idxs, tail = 2000, diffeq, colors = COLORS,
 )
 main.scene[AbstractPlotting.Axis][:names, :axisnames] = ("q₁", "q₂", "p₂")
+
+# %% Poincare brainscanning application
+using GLMakie, DynamicalSystems, InteractiveChaos
+using OrdinaryDiffEq
+
+ds = Systems.henonheiles()
+diffeq = (alg = Vern9(),)
+u0s = [
+    [0.0, -0.25, 0.42081, 0.0],
+    [0.0, 0.1, 0.5, 0.0],
+    [0.0, -0.31596, 0.354461, 0.0591255]
+]
+trs = [trajectory(ds, 10000, u0; diffeq...)[:, SVector(1,2,3)] for u0 ∈ u0s]
+for i in 2:length(u0s)
+    append!(trs[1], trs[i])
+end
+
+# Inputs:
+j = 1 # the dimension of the plane
+tr = trs[1]
+
+brainscan_poincaresos(tr, j)
