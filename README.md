@@ -6,6 +6,8 @@
 - [Figures](#figures)
 - [Interactive applications, videos, extra plots](#interactive-applications--videos--extra-plots)
 
+## Introduction
+Here some introductory text about this repository will be stated.
 
 ## Tutorials for Julia
 Here we list useful tutorials and other sources that can help you getting used to the Julia language, DynamicalSystems.jl or other useful Julia packages.
@@ -17,28 +19,28 @@ Here we list useful tutorials and other sources that can help you getting used t
 - https://juliadynamics.github.io/JuliaDynamics/ : Website of the JuliaDynamics organization
 - https://www.youtube.com/watch?v=KPEqYtEd-zY : Introduction to solving differential equations in Julia, which is generally useful for nonlinear dynamics
 - https://julialang.org/community/ : Resources for asking questions about Julia
-- https://discourse.julialang.org/ : Official Julia forum (you can also post questions there)
+- https://discourse.julialang.org/ : Official Julia forum (and also the main platform that newcomers ask questions)
 
 
 ## Installation and reproducibility
 
-This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
+The accompanying code base used here is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
 to make a reproducible scientific project named
 > ExercisesRepo
 
 To (locally) reproduce this project, first install Julia and then do the following:
 
-0. Download this code base as-is.
+0. Download this repository as-is and export it to some folder.
 0. Install `DrWatson` on your general Julia installation by doing:
    ```
    julia> using Pkg; Pkg.add("DrWatson")
    ```
 1. Then do:
    ```
-   julia> Pkg.activate("path/to/this/project")
+   julia> Pkg.activate("path/to/the/downloaded/project")
    julia> Pkg.instantiate()
    ```
-1. This repository uses matplotlib (package `PyPlot`) for plots. You could use any plotting package instead, but if you want to use `PyPlot` run the following commands to ensure a working installation for all operating systems:
+1. This repository uses the Python library matplotlib (package `PyPlot`) for plots. You could use any plotting package instead, but if you want to use `PyPlot` and replicate exactly our plots, then run the following commands to ensure a working installation for all operating systems:
    ```
    julia> ENV["PYTHON"] = ""
    julia> Pkg.add("PyCall"); Pkg.build("PyCall")
@@ -61,8 +63,6 @@ Multiple choice questions that we use during lecturing to increase student invol
 
 ## Figures
 The code that creates the figures of our book is in the `figure_generation` folder. Notice however that some figures were made with (or enhanced by) PowerPoint and thus we do not share this here.
-
-The figures themselves are located in the `plots` directory.
 
 ## Interactive applications, videos, extra plots
 In the folder `animations_code` we provide animation-related scripts (some of which are self-documented by comments). These provide the following extras that we use while lecturing the various chapters:
