@@ -18,10 +18,10 @@ function roots(ε)
     return [Point2f0(x, 0) for x in r], s # roots, stability
 end
 
-scene, layout = layoutscene(resolution = (1000, 800))
+figure, layout = layoutscene(resolution = (1000, 800))
 
-ax = layout[1, :] = LAxis(scene)
-sll = labelslider!(scene, "ε =", 0:0.01:1.0; sliderkw = Dict(:startvalue => 0.65))
+ax = layout[1, :] = LAxis(figure)
+sll = labelslider!(figure, "ε =", 0:0.01:1.0; sliderkw = Dict(:startvalue => 0.65))
 layout[2, :] = sll.layout
 ε_observable = sll.slider.value
 
@@ -34,7 +34,7 @@ rootvals = Observable(r)
 rootcols = Observable(s)
 scatter!(ax, rootvals; color = rootcols, markersize = 10)
 
-display(scene)
+display(figure)
 
 on(ε_observable) do ε
     fs[] = dTdt.(Ts, ε)

@@ -7,7 +7,7 @@
 - [Interactive applications, videos, extra plots](#interactive-applications--videos--extra-plots)
 
 
-## Tutorials
+## Tutorials for Julia
 Here we list useful tutorials and other sources that can help you getting used to the Julia language, DynamicalSystems.jl or other useful Julia packages.
 
 - https://www.youtube.com/watch?v=8h8rQyEpiZA&t=42s : A beginner introduction to the Julia language

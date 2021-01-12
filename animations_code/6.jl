@@ -5,10 +5,10 @@ using GLMakie, DynamicalSystems, InteractiveChaos
 using AbstractPlotting.MakieLayout
 
 # %% Delay time impact
-scene, layout = layoutscene(resolution = (1000, 800))
-display(scene)
-ax = layout[1, :] = LScene(scene)
-sll = labelslider!(scene, "τ =", 1:100)
+figure, layout = layoutscene(resolution = (1000, 800))
+display(figure)
+ax = layout[1, :] = LScene(figure)
+sll = labelslider!(figure, "τ =", 1:100)
 layout[2, :] = sll.layout
 τ = sll.slider.value
 

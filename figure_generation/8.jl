@@ -27,11 +27,11 @@ for (ξ, s) in js
 end
 
 
-scene, bmapax = billiard_bmap_plot(bd, ps;
+figure, bmapax = billiard_bmap_plot(bd, ps;
 colors = colors, tail = 100000, steps = 100003, backgroundcolor = RGBf0(1,1,1),
 ms = 10, vr = 0.1)
 Makie.ylims!(bmapax, 0.2, 0.9)
-# Makie.save(joinpath(figdir, "circlebilliard.png"), scene)
+# Makie.save(joinpath(figdir, "circlebilliard.png"), figure)
 
 # %% Chaotic billiard (sinai)
 InteractiveChaos.obcolor(::Antidot) = to_color(COLORS[1])
@@ -44,7 +44,7 @@ colors = [to_color(COLORS[i+1]) for i in 1:2]
 bd = billiard_sinai(0.25f0, 1f0, 1f0)
 
 ps = particlebeam(0.2f0, 0.75, π + π/4 + 0.414235, 100, 0.002)
-scene, bmapax = billiard_bmap_plot(bd, ps; colors = colors,
+figure, bmapax = billiard_bmap_plot(bd, ps; colors = colors,
 tail = 3100, steps = 3400, backgroundcolor = RGBf0(1,1,1),
 ms = 10, vr = 0.05)
 
@@ -61,7 +61,7 @@ pr2 = Particle(0.0f0, 1.9f0, 0.0f0)
 ps = [pc, pr, pr2]
 colors = [to_color(COLORS[i+1]) for i in 1:length(ps)]
 
-scene, bmapax = billiard_bmap_plot(bd, ps;
+figure, bmapax = billiard_bmap_plot(bd, ps;
 colors = colors, tail = 100000, steps = 1000003, backgroundcolor = RGBf0(1,1,1),
 ms = 5)
 
@@ -72,7 +72,7 @@ ms = 5)
 bmapax.xlabelsize = 40
 bmapax.ylabelsize = 40
 bmapax.ylabelpadding = 15
-# Makie.save(joinpath(figdir, "mushroom.png"), scene)
+# Makie.save(joinpath(figdir, "mushroom.png"), figure)
 
 # %% Natural measure of henon map
 using DynamicalSystems
@@ -101,18 +101,18 @@ x ./= 2
 using Makie
 using Makie: Point3f0, Vec3f0, Rect3D
 
-scene = Makie.meshscatter(vec(Point3f0.(x, y, 0.0)),
+figure = Makie.meshscatter(vec(Point3f0.(x, y, 0.0)),
     markersize=Vec3f0.(2ε, 2ε, p), marker=Rect3D(Vec3f0(0), Vec3f0(1)),
     limits=Rect3D(Vec3f0(0), Vec3f0(1)),
     color = clamp.(p, 0, 0.2))
-ylims!(scene, 1.5 .* extrema(y)...)
-xlims!(scene, extrema(x)...)
-xticks!(scene; )
-zlabel!(scene, "ρ")
-display(scene)
+ylims!(figure, 1.5 .* extrema(y)...)
+xlims!(figure, extrema(x)...)
+xticks!(figure; )
+zlabel!(figure, "ρ")
+display(figure)
 
 
-scene
+figure
 # %%
 
 # Same but for standard map
@@ -125,7 +125,7 @@ us = [
 sm = Systems.standardmap(; k = 0.9)
 
 
-scene = Scene()
+figure = Scene()
 for u in us
     x, y, p = begin
         X = trajectory(sm, 10^7, u; Ttr = 100)
@@ -136,18 +136,18 @@ for u in us
     end
     using Makie
 
-    Makie.meshscatter!(scene, vec(Point3f0.(x, y, 0.0)),
+    Makie.meshscatter!(figure, vec(Point3f0.(x, y, 0.0)),
     markersize=Vec3f0.(ε, ε, p), marker=Rect3D(Vec3f0(0), Vec3f0(1)),
     limits=Rect3D(Vec3f0(0), Vec3f0(1)),
     color = p, colormap = :viridis)
 end
 
-xlims!(scene, 0, 2π)
-ylims!(scene, 0, 2π)
-xlabel!(scene, "θ")
-ylabel!(scene, "p")
-zlabel!(scene, "ρ")
-display(scene)
+xlims!(figure, 0, 2π)
+ylims!(figure, 0, 2π)
+xlabel!(figure, "θ")
+ylabel!(figure, "p")
+zlabel!(figure, "ρ")
+display(figure)
 
 
 # Same but for mushroom billiard
@@ -163,7 +163,7 @@ particles = [pc, pr, pr2]
 
 ε = 0.01
 
-scene = Scene()
+figure = Scene()
 for i in 1:3
     x, y, p = begin
         bmap, = boundarymap(particles[i], bd, 10^6)
@@ -174,13 +174,13 @@ for i in 1:3
         x, y, p ./ maximum(p)
     end
 
-    Makie.meshscatter!(scene, vec(Point3f0.(x, y, 0.0)),
+    Makie.meshscatter!(figure, vec(Point3f0.(x, y, 0.0)),
     markersize=Vec3f0.(ε, ε, p), marker=Rect3D(Vec3f0(0), Vec3f0(1)),
     limits=Rect3D(Vec3f0(0), Vec3f0(1)),
     color = p, colormap = cmaps[i])
 end
 
-display(scene)
+display(figure)
 
 # %% Standard map island shrinking
 using DynamicalSystems

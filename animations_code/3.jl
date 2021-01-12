@@ -13,7 +13,7 @@ u0s =  [u0 .+ 1e-3i for i in 1:3]
 
 diffeq = (alg = Vern9(), dtmax = 0.01)
 
-scene, main, layout, obs = interactive_evolution(
+figure, main, layout, obs = interactive_evolution(
     ds, u0s; tail = 100, diffeq, colors = COLORS,
 )
 
@@ -139,7 +139,7 @@ function λcolor(u)
     # RGBf0(v/2, 0, v)
 end
 
-state, scene = interactive_poincaresos(
+state, figure = interactive_poincaresos(
     hh, plane, (2, 4), complete;
     labels = ("q₂" , "p₂"), color = λcolor, diffeq...
 )

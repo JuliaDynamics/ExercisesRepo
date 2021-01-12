@@ -13,9 +13,9 @@ I = 0.0
 fh = Systems.fitzhugh_nagumo(zeros(2); a, b, ε, I)
 
 # Layout plot:
-scene, layout = layoutscene(resolution = (1000, 800))
-ax = layout[1,1] = LAxis(scene)
-display(scene)
+figure, layout = layoutscene(resolution = (1000, 800))
+ax = layout[1,1] = LAxis(figure)
+display(figure)
 ax.xlabel = "u"
 ax.ylabel = "w"
 ax.title = "FitzHugh Nagumo, a=$a, b=$b"
@@ -28,7 +28,7 @@ lines!(ax, us, w1; color = COLORS[1], linewidth = 2, linestyle = :dash)
 lines!(ax, us, w2; color = COLORS[2], linewidth = 2, linestyle = :dot)
 
 # Create trajectories on point selection
-spoint = select_point(ax.scene)
+spoint = select_point(ax.figure)
 on(spoint) do pos
     tr = trajectory(fh, 10000, SVector(pos...))
     lines!(ax, columns(tr)...;
@@ -68,7 +68,7 @@ lims = ((-R-r, R+r), (-R-r, R+r), (-3r, 3r))
 
 plotkwargs = [(linewidth = i^2*1.0,) for i in 1:length(u0s)]
 
-scene, main, layout, obs = interactive_evolution(
+figure, main, layout, obs = interactive_evolution(
     ds, u0s; tail = 20000, diffeq, colors = COLORS, transform = torus, lims,
     plotkwargs
 )

@@ -33,7 +33,7 @@ ds = Systems.standardmap(; k = 1.0)
 u0s = [[θ, p] for θ ∈ 0:2π for p ∈ 0:2π]
 lims = ((0, 2π), (0, 2π))
 
-scene, main, layout, obs = interactive_evolution(
+figure, main, layout, obs = interactive_evolution(
     ds, u0s; tail = 1000, lims,
 )
 main.xlabel = "θ"
@@ -47,7 +47,7 @@ u0s =  [[10,20,40.0] .+ rand(3) for _ in 1:6]
 
 diffeq = (alg = Tsit5(), dtmax = 0.01)
 
-scene, main, layout, obs = interactive_evolution(
+figure, main, layout, obs = interactive_evolution(
     ds, u0s; tail = 1000, diffeq, colors = to_color.(COLORS)
 )
 
@@ -65,11 +65,11 @@ img = AbstractPlotting.ImagePattern([c a; a c]);
 AbstractPlotting.mesh!(main, p; color = img);
 
 # %% Plot Poincare sos
-psosplot = layout[:, 2] = LAxis(scene)
+psosplot = layout[:, 2] = LAxis(figure)
 psos = poincaresos(ds, (2, 0.0), 2000.0)
 AbstractPlotting.scatter!(psosplot, psos[:, 1], psos[:, 3])
 
-display(scene)
+display(figure)
 
 # %% Henon heiles system trajectories
 ds = Systems.henonheiles()
@@ -81,10 +81,10 @@ u0s = [[0.0, -0.25, 0.42081, 0.0],
 diffeq = (alg = Vern9(), dtmax = 0.01)
 idxs = (1, 2)
 
-scene, main, layout, obs = interactive_evolution(
+figure, main, layout, obs = interactive_evolution(
     ds, u0s; idxs, tail = 2000, diffeq, colors = COLORS,
 )
-main.scene[AbstractPlotting.Axis][:names, :axisnames] = ("q₁", "q₂", "p₂")
+main.figure[AbstractPlotting.Axis][:names, :axisnames] = ("q₁", "q₂", "p₂")
 
 # %% Poincare brainscanning application
 using GLMakie, DynamicalSystems, InteractiveChaos
