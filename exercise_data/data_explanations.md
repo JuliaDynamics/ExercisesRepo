@@ -14,3 +14,4 @@
 14 = Dataset 93 of https://webdav.tuebingen.mpg.de/cause-effect/ (citation = J. M. Mooij, J. Peters, D. Janzing, J. Zscheischler, B. Schoelkopf:
 "Distinguishing cause from effect using observational data: methods and benchmarks"). First column of data is average precipitation over 1948 to 2004 in mm/day, second is average runoff
 15 = Same as 14, but dataset 73: first column is CO2 emissions, second column is energy use (kg of oil equivalent)
+16 = Long-time simulation data for orbital parameters of Earth, from http://vo.imcce.fr/insola/earth/online/earth/online/index.php with DOI: 10.1051/0004-6361:20041335. The data (each column) are: eccentricity, climatic precession, obliquity, insolation, while the sampling time is 1000 years.
