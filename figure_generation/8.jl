@@ -1,17 +1,17 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("style.jl"))
-using InteractiveChaos, Random
+using InteractiveDynamics, Random
 using DynamicalBilliards
 import GLMakie
 using GLMakie: to_color, RGBf0, RGBAf0
 using DynamicalSystems
 
 # Set style to book colors
-InteractiveChaos.obcolor(::Antidot) = to_color(COLORS[1])
-InteractiveChaos.obcolor(::Obstacle) = to_color(COLORS[1])
-InteractiveChaos.obfill(o::Antidot) = RGBAf0(0,0,0,0)
-InteractiveChaos.obls(::Antidot) = nothing
+InteractiveDynamics.obcolor(::Antidot) = to_color(COLORS[1])
+InteractiveDynamics.obcolor(::Obstacle) = to_color(COLORS[1])
+InteractiveDynamics.obfill(o::Antidot) = RGBAf0(0,0,0,0)
+InteractiveDynamics.obls(::Antidot) = nothing
 
 
 # %% Circle billiard plot
@@ -36,9 +36,9 @@ GLMakie.ylims!(bmapax, 0.2, 0.9)
 # GLMakie.save(joinpath(figdir, "circlebilliard.png"), figure)
 
 # %% Chaotic billiard (sinai)
-InteractiveChaos.obcolor(::Antidot) = to_color(COLORS[1])
-InteractiveChaos.obfill(o::Antidot) = RGBAf0(0,0,0,0)
-InteractiveChaos.obls(::Antidot) = nothing
+InteractiveDynamics.obcolor(::Antidot) = to_color(COLORS[1])
+InteractiveDynamics.obfill(o::Antidot) = RGBAf0(0,0,0,0)
+InteractiveDynamics.obls(::Antidot) = nothing
 
 colors = [to_color(COLORS[i+1]) for i in 1:2]
 

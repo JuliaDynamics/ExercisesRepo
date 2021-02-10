@@ -2,7 +2,7 @@ using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
 
-using InteractiveChaos
+using InteractiveDynamics
 using DynamicalSystems
 using GLMakie
 

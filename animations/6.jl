@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
-using GLMakie, DynamicalSystems, InteractiveChaos
+using GLMakie, DynamicalSystems, InteractiveDynamics
 using AbstractPlotting.MakieLayout
 
 # %% Delay time impact

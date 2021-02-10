@@ -1,13 +1,13 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
-using GLMakie, DynamicalBilliards, InteractiveChaos
+using GLMakie, DynamicalBilliards, InteractiveDynamics
 
 # Set style to book colors
-InteractiveChaos.obcolor(::Antidot) = to_color(COLORS[1])
-InteractiveChaos.obcolor(::Obstacle) = to_color(COLORS[1])
-InteractiveChaos.obfill(o::Antidot) = RGBAf0(0,0,0,0)
-InteractiveChaos.obls(::Antidot) = nothing
+InteractiveDynamics.obcolor(::Antidot) = to_color(COLORS[1])
+InteractiveDynamics.obcolor(::Obstacle) = to_color(COLORS[1])
+InteractiveDynamics.obfill(o::Antidot) = RGBAf0(0,0,0,0)
+InteractiveDynamics.obls(::Antidot) = nothing
 
 # %% Circle billiard animation
 bd = Billiard(Antidot([0.0, 0.0], 1.0, false))
@@ -69,7 +69,7 @@ sm = Systems.standardmap(; k = 1.0)
 g = 10 # grid density
 inrect(u, r) = (r.origin[1] ≤ u[1] ≤ r.origin[1]+r.widths[1]) && (r.origin[2] ≤ u[2] ≤ r.origin[2] + r.widths[2])
 integ = integrator(sm)
-marker = InteractiveChaos.MARKER
+marker = InteractiveDynamics.MARKER
 
 N = 100 # how many points to plot inside the rect
 Nslider = labelslider!(

@@ -24,7 +24,7 @@ dt = 0.01  # sampling time
 A  = trajectory(lorenz, T; dt)
 
 # %% Animate evolution of trajectories in the Standard map
-using InteractiveChaos
+using InteractiveDynamics
 using DynamicalSystems
 using GLMakie
 
@@ -87,7 +87,7 @@ figure, main, layout, obs = interactive_evolution(
 main.figure[AbstractPlotting.Axis][:names, :axisnames] = ("q₁", "q₂", "p₂")
 
 # %% Poincare brainscanning application
-using GLMakie, DynamicalSystems, InteractiveChaos
+using GLMakie, DynamicalSystems, InteractiveDynamics
 using OrdinaryDiffEq
 
 ds = Systems.henonheiles()

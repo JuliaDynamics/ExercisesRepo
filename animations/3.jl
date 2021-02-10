@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("style.jl"))
-using DynamicalSystems, InteractiveChaos
+using DynamicalSystems, InteractiveDynamics
 import GLMakie
 using AbstractPlotting.MakieLayout
 
@@ -110,7 +110,7 @@ axs[1, 3].set_title("sq. displ. \$Z_n\$")
 fig.tight_layout(;pad = 0.25)
 
 # %% Interactive GALI psos for henon heiles
-using InteractiveChaos, GLMakie, OrdinaryDiffEq, DynamicalSystems
+using InteractiveDynamics, GLMakie, OrdinaryDiffEq, DynamicalSystems
 diffeq = (alg = Vern9(), abstol = 1e-9, reltol = 1e-9)
 
 hh = Systems.henonheiles()

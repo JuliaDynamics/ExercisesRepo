@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
-using GLMakie, DynamicalSystems, InteractiveChaos
+using GLMakie, DynamicalSystems, InteractiveDynamics
 using Roots
 
 # %% Interactive bifurcations for 1D energy balance
@@ -43,7 +43,7 @@ on(ε_observable) do ε
 end
 
 # %% Logistic map cobweb and timeseries
-using InteractiveChaos, GLMakie, DynamicalSystems
+using InteractiveDynamics, GLMakie, DynamicalSystems
 
 # the second range is a convenience for intermittency example of logistic
 rrange = 1:0.001:4.0
@@ -58,7 +58,7 @@ interactive_cobweb(
 )
 
 # %% Interactive orbit diagram for logistic map
-using InteractiveChaos, GLMakie
+using InteractiveDynamics, GLMakie
 using DynamicalSystems
 
 ds = Systems.logistic()
@@ -71,7 +71,7 @@ oddata = interactive_orbitdiagram(
 )
 
 # %% Cobweb for pomeaumannevile
-using InteractiveChaos, GLMakie
+using InteractiveDynamics, GLMakie
 using DynamicalSystems
 
 using DynamicalSystems, PyPlot

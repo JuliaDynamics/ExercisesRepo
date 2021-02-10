@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
-using GLMakie, DynamicalSystems, InteractiveChaos
+using GLMakie, DynamicalSystems, InteractiveDynamics
 using AbstractPlotting.MakieLayout
 
 # %% Fitzhugh clickable phase space
@@ -32,7 +32,7 @@ spoint = select_point(ax.figure)
 on(spoint) do pos
     tr = trajectory(fh, 10000, SVector(pos...))
     lines!(ax, columns(tr)...;
-        color = InteractiveChaos.randomcolor(), linewidth = 4.0
+        color = InteractiveDynamics.randomcolor(), linewidth = 4.0
     )
 end
 

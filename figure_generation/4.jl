@@ -169,7 +169,7 @@ end
 ax.plot(x, y, ls = "None", ms = 0.5, color = "black", marker = "o", alpha = 0.02)
 
 # %% Roessler trajectory -> PSOS -> Lorenz map
-using InteractiveChaos
+using InteractiveDynamics
 using DynamicalSystems, GLMakie
 using AbstractPlotting.MakieLayout
 
