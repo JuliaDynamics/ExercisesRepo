@@ -1,6 +1,6 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
-include(srcdir("style.jl"))
+include(srcdir("colorscheme.jl"))
 
 using GLMakie, InteractiveDynamics, DynamicalSystems, OrdinaryDiffEq, LinearAlgebra
 diffeq = (alg = Tsit5(), dtmax = 0.02, abstol = 1e-6, reltol = 1e-6)
@@ -32,10 +32,10 @@ color = to_color("#1e1528") # trajectory color
 
 figure = Figure(resolution = (1000, 800))
 pinteg = DynamicalSystems.parallel_integrator(ds, [u0]; diffeq...)
-obs, finalpoints = InteractiveDynamics.init_trajectory_observables(1, pinteg, tail, SVector(1, 2), identity)
+obs, finalpoints = InteractiveDynamics.init_trajectory_observables(1, pinteg, tail, SVector(1,2), identity)
 
 main = figure[1,1] = InteractiveDynamics.init_main_trajectory_plot(
-    ds, figure, idxs, lims, pinteg, [color], obs, NamedTuple(), finalpoints, 1.0
+    ds, figure, SVector(1,2), lims, pinteg, [color], obs, NamedTuple(), finalpoints, 1.0
 )
 
 # Plot the stability basin and attractor
@@ -78,10 +78,10 @@ on(run) do clicks
     @async while isrunning[]
         DynamicalSystems.step!(pinteg)
         ob = obs[1]
-        last_state = transform(DynamicalSystems.get_state(pinteg, 1))[idxs]
+        last_state = DynamicalSystems.get_state(pinteg, 1)
         ob[] = push!(ob[], last_state) # push and trigger update with `=`
         finalpoints[] = [x[][end] for x in obs]
-        sleep(0.00001) # use sleep instead to slow down animation
+        sleep(0.00001) # use sleep to slow down animation
         isopen(figure.scene) || break # crucial, ensures computations stop if closed window
     end
 end
