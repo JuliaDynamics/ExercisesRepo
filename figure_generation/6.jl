@@ -3,31 +3,13 @@ using DrWatson
 include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot, Random
 
-# %% Using Cao's method to estimate embedding
+# %% Demonstration of delay embeddings
 lo = Systems.lorenz([0, 10, 0.0])
-
 tr = trajectory(lo, 1000; Ttr=10)
 x, y, z = columns(tr)
-fig = figure(figsize=(figx/2, figy));
 w = x
-ψ = z .- y
-
-for (s, l) in zip((w, ψ), ("\$w=x\$", "\$w=z-y\$"))
-    τ = estimate_delay(s, "mi_min")
-    Ed = delay_afnn(s, τ, 2:7)
-    plot(2:7, Ed, marker = "o", label = l)
-end
-
-xlabel("\$d\$"; labelpad = -10)
-ylabel("\$E_{d}\$")
-legend(title="measurement")
-fig.tight_layout(pad = 0.4)
-fig.subplots_adjust(left = 0.15, bottom = 0.15)
-wsave(plotsdir("caodemonstration"), fig)
-
-# %%
-γ = 2
-R = reconstruct(w, γ, τ)
+τ = estimate_delay(w, "mi_min")
+R = embed(w, 3, τ)
 
 close("all")
 N = 5000
@@ -69,7 +51,7 @@ fig.tight_layout(pad = 0.1)
 # fsave(joinpath(figdir, "delayembedding"), fig)
 
 # %% value of τ demonstration
-γ = 3
+d = 2
 τ1 = 2
 τ2 = τ
 τ3 = 2τ2
@@ -78,7 +60,7 @@ e=10
 
 fig = figure()
 for (i, τ) in enumerate((0, τ1, τ2, τ3))
-    R = i == 1 ? tr : reconstruct(w, γ, τ)
+    R = embed(w, d, τ)
     ax = subplot(1, 4, i, projection = "3d")
     ax.plot(R[1:N, 1], R[1:N, 2], R[1:N, 3],
     color = i == 1 ? "C1" : "C2", lw = 1,
@@ -100,6 +82,49 @@ end
 fig.tight_layout()
 fig.subplots_adjust(wspace = 0.0001, bottom = -0.1, top = 1, left = 0.0, right = 1)
 # fsave(joinpath(figdir, "taudemonstration"), fig)
+
+
+# %% show AC, MI for choosing optimal τ
+ττ = 0:90
+ac = autocor(w, ττ)
+smi = selfmutualinfo(w, ττ)
+smi ./= maximum(smi)
+
+fig = figure(figsize = (figx/2, figy))
+ax = gca()
+ax.plot(ττ, ac; label = "AC")
+ax.plot(ττ, smi, label = "SMI")
+τ = estimate_delay(w, "mi_min")
+ax.scatter(τ, smi[τ]; color = "C2", s = 100, zorder = 99)
+ax.set_ylim(0,1.05)
+ax.set_xticks(0:30:90)
+ax.set_xlabel("\$\\tau\$", labelpad = -20)
+ax.legend()
+fig.tight_layout(;pad = 0.25)
+wsave(plotsdir("mutualinfo_ac_tau"), fig)
+
+# %% Using Cao's method to estimate embedding
+lo = Systems.lorenz([0, 10, 0.0])
+
+tr = trajectory(lo, 1000; Ttr=10)
+x, y, z = columns(tr)
+fig = figure(figsize=(figx/2, figy));
+w = x
+ψ = z .- y
+
+for (s, l) in zip((w, ψ), ("\$w=x\$", "\$w=z-y\$"))
+    τ = estimate_delay(s, "mi_min")
+    Ed = delay_afnn(s, τ, 2:7)
+    plot(2:7, Ed, marker = "o", label = l)
+end
+
+xlabel("\$d\$"; labelpad = -10)
+ylabel("\$E_{d}\$")
+legend(title="measurement")
+fig.tight_layout(pad = 0.4)
+fig.subplots_adjust(left = 0.15, bottom = 0.15)
+wsave(plotsdir("caodemonstration"), fig)
+
 
 # %% broomhead king
 using DynamicalSystems, PyPlot

@@ -8,7 +8,9 @@ using DynamicalSystems, PyPlot, Roots, ForwardDiff
 # %% Bifurcation versus ε
 fig = figure(figsize = (figx/2, figx/3))
 ax = gca()
-dTdt(T, ε=0.65) = 0.5 + (0.4/π)*atan((T-263)/2) - 10*ε*(0.002T)^4
+
+α(T) = 0.5 - 0.2*tanh((T-263)/4)
+dTdt(T, ε=0.65) = 1 - α(T) - 10*ε*(0.002T)^4
 es = 0.3:0.005:0.9
 for e in es
     f = (T) -> dTdt(T, e)
@@ -168,7 +170,7 @@ ax.plot(x, y, ls = "None", ms = 0.5, color = "black", marker = "o", alpha = 0.02
 
 # %% Roessler trajectory -> PSOS -> Lorenz map
 using InteractiveChaos
-using DynamicalSystems, Makie
+using DynamicalSystems, GLMakie
 using AbstractPlotting.MakieLayout
 
 
@@ -229,7 +231,7 @@ loplot.xlabelsize = LS
 loplot.ylabelsize = LS
 display(figure)
 
-# Makie.save(plotsdir("roessler_map.png"), figure)
+# GLMakie.save(plotsdir("roessler_map.png"), figure)
 
 # %% Bifurcation kit code
 # Better check https://rveltz.github.io/BifurcationKit.jl/dev/iterator/#
@@ -237,7 +239,7 @@ using BifurcationKit, SparseArrays, LinearAlgebra
 const BK = BifurcationKit
 using ForwardDiff
 
-F(T, ε=0.65) = @. 0.5 + (0.4/π)*atan((T-263)/2) - 10*ε*(0.002T)^4
+F(T, ε=0.65) = @. 0.5 + 0.2*tanh((T-263)/4) - 10*ε*(0.002T)^4
 
 function deriv(x, p)
 	f = (x) -> F(x, p)

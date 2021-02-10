@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("colorscheme.jl"))
-using Makie, DynamicalSystems, InteractiveChaos
+using GLMakie, DynamicalSystems, InteractiveChaos
 using AbstractPlotting.MakieLayout
 
 # %% Fitzhugh clickable phase space

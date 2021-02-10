@@ -194,14 +194,35 @@ function ccm(x, y, d, τ)
     return cor(y, ỹ)
 end
 
-
 ds = Systems.lorenz()
-tr = trajectory(ds, 5000; dt = 0.1)
-x, y = columns(tr)
-Ns = 500:5000:length(tr)
-ρs = [ccm(x[1:N], y[1:N], 3, 5) for N in Ns]
+tr = trajectory(ds, 1000; dt = 0.1)
+x, y, z = columns(tr)
+Ns = 100:100:length(tr)÷10
+ρx = [ccm(x[1:N], y[1:N], 3, 5) for N in Ns]
+ρy = [ccm(y[1:N], x[1:N], 3, 5) for N in Ns]
+ρz = [ccm(z[1:N], y[1:N], 3, 5) for N in Ns]
 
-ccm(x, y, 3, 5)
+fig = figure(figsize = (figx/2, figy))
+plot(Ns, ρx; label = "\$r_{x\\to y}\$")
+plot(Ns, ρy; label = "\$r_{y\\to x}\$")
+plot(Ns, ρz; label = "\$r_{z\\to y}\$")
+legend()
 
-figure()
-plot(Ns, ρs)
+# %% convergent cross mapping explanation figure
+using3D()
+lo = Systems.lorenz()
+tr = trajectory(lo, 100; Ttr=100, dt = 0.01)
+x, y, z = columns(tr)
+t = 0:0.01:100
+
+fig = figure()
+ax1 = fig.add_subplot(131, projection = "3d")
+fig.tight_layout(pad = 0.1)
+ax1.plot(x,y,z; lw = 1)
+ax1.axis("off")
+
+ax2 = fig.add_subplot(132)
+ax2.plot(t, x)
+ax2.plot(t, z)
+ax2.set_xlim(0, 10)
+ax2.set_yticks([])

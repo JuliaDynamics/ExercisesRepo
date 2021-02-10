@@ -25,6 +25,29 @@ tight_layout(pad = 0.25)
 subplots_adjust(bottom = 0.15, left = 0.12)
 wsave(plotsdir("sensitive"), fig)
 
+# %% definition of lyapunov
+using LinearAlgebra
+lo = Systems.lorenz([20,20,20.0])
+X₁ = trajectory(lo, 45)
+u₂ = get_state(lo) .+ 1e-6
+X₂ = trajectory(lo, 45, u₂)
+δ  = norm.(X₂.data .- X₁.data)
+λ = lyapunov(lo, 100000)
+
+fig = figure(figsize=(figx/2,figy/2))
+ax = gca()
+ax.plot(0:0.01:45, log.(δ), c = COLORS[1], label ="\$\\ln(\\delta(t)))\$")
+ax.set_yticks(-12:4:4)
+ax.set_xlabel("\$t\$", labelpad=-20)
+# Lyapunov
+ax.plot([0, 15] .+ 4, λ .* [0, 15] .- 13, color = COLORS[2])
+ax.text(12, -9, "\$\\lambda\$=$(round(λ;digits=2))", color = COLORS[2])
+ax.legend(;handlelength = 1.0)
+xticks(0:15:45)
+tight_layout(pad = 0.25)
+subplots_adjust(bottom = 0.22, left = 0.12)
+wsave(plotsdir("lyapunov"), fig)
+
 # %% Folding in henon map
 a = 1.4; b = 0.3
 he = Systems.henon(;a=a, b=b)
@@ -87,28 +110,6 @@ subplots_adjust(left = 0.04, bottom = 0.1, wspace = 0.1, top = 0.9)
 add_identifiers!(fig; xloc = 0.0)
 wsave(plotsdir("stretchinghenon"), fig)
 
-# %% definition of lyapunov
-using LinearAlgebra
-he = Systems.henon()
-X₁ = trajectory(he, 50)
-u₂ = get_state(he) .+ 1e-6
-X₂ = trajectory(he, 50, u₂)
-δ  = norm.(X₂.data .- X₁.data)
-λ = lyapunov(he, 10000)
-
-fig = figure(figsize=(figx/2,2figy/3))
-ax = gca()
-ax.plot(0:50, log.(δ), c = COLORS[1], label ="\$\\ln(\\delta(n)))\$")
-ax.set_yticks(-12:4:0)
-ax.set_xlabel("\$n\$", labelpad=-20)
-# Lyapunov
-ax.plot([0, 25] .+ 5, λ .* [0, 25] .- 13, color = COLORS[2])
-ax.text(20, -9, "\$\\lambda\$=$(round(λ;digits=2))", color = COLORS[2])
-ax.legend(;handlelength = 1.0)
-xticks(0:20:50)
-tight_layout(pad = 0.25)
-subplots_adjust(bottom = 0.2, left = 0.12)
-wsave(plotsdir("lyapunov"), fig)
 
 # %% chaoticity map
 using DynamicalSystems, PyPlot, OrdinaryDiffEq

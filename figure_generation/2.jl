@@ -6,7 +6,7 @@ using DynamicalSystems, PyPlot, Random
 # %% 1d climate
 using DynamicalSystems, PyPlot, Roots
 
-αtan(T) = 0.5 - (0.4/π)*atan((T-263)/2)
+αtan(T) = 0.5 - 0.2*tanh((T-263)/4)
 dTdt(T, ε = 0.65, α=αtan, s= 1.0) = s*(1 - α(T)) - 1.6e-10 * ε * T^4
 dTdt(T; ε = 0.65, α=αtan, s = 1.0) = dTdt(T, ε, α, s)
 
@@ -43,7 +43,7 @@ end
 legend()
 tight_layout()
 subplots_adjust(bottom = 0.2, left = 0.12)
-wsave(plotsdir("1dstatespace"), fig)
+# wsave(plotsdir("1dstatespace"), fig)
 
 
 # %% Fixed point classification in 2D
