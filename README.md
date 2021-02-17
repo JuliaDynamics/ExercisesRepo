@@ -9,8 +9,7 @@
 ## Introduction
 Here some introductory text about this repository will be stated.
 
-## Tutorials for Julia
-Here we list useful tutorials and other sources that can help you getting used to the Julia language, DynamicalSystems.jl or other useful Julia packages.
+## Tutorials for Julia and related packages
 
 - https://www.youtube.com/watch?v=8h8rQyEpiZA&t=42s : A beginner introduction to the Julia language
 - https://www.youtube.com/watch?v=Fi7Pf2NveH0 : Intensive Julia workshop, for people already familiar with programming that want to transition to Julia

@@ -282,7 +282,6 @@ for (i, γ) in enumerate(γplots)
     g = range(xmin, xmax; length = 1000)
     c = high_quality_statespace(ma, g)
     axs[i+1].pcolormesh(g, g, c'; cmap = cmap, shading = "gouraud")
-    # axs[i+1].pcolormesh(g, g, c'; cmap = cmap)
 end
 
 for i in 2:3;
