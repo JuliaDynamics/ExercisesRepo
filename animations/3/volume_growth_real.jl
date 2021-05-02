@@ -7,8 +7,6 @@ using AbstractPlotting
 using LinearAlgebra
 using Statistics
 
-# TODO: Add rotation
-
 # Code for 3D animation
 ds = Systems.lorenz()
 u0 = trajectory(ds, 10; Ttr = 100)[end]
