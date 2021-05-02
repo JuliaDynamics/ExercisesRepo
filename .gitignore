@@ -12,6 +12,7 @@ lectures
 # Will reenable manifest later
 Manifest.toml
 solutions
+*.docx
 
 ################################################################################
 #                          DrWatson Project Structure                          #

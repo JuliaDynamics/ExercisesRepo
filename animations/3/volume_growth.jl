@@ -73,13 +73,14 @@ tr = trajectory(ds, 100N*dt, u0; dt)
 dotobs = Observable([u0])
 trobs = Observable([u0])
 if ds isa ContinuousDynamicalSystem
-    lines!(axtr, tr.data; linewidth = 0.2, color = RGBAf0(0,0,0,0.5))
-    lines!(axtr, trobs; linewidth = 4.0, color = to_color(JULIADYNAMICS_COLORS[1]))
+    lines!(axtr, tr.data; linewidth = 0.2, color = RGBAf0(0,0,0,0.5), transparency = true )
+    lines!(axtr, trobs; linewidth = 4.0, color = to_color(JULIADYNAMICS_COLORS[1]), overdraw = true)
 else
-    scatter!(axtr, tr.data; markersize = 1000, color = RGBAf0(0,0,0,0.5), strokewidth=0)
-    scatter!(axtr, trobs; markersize = 2000, color = to_color(JULIADYNAMICS_COLORS[1]))
+    scatter!(axtr, tr.data; markersize = 1000, color = RGBAf0(0,0,0,0.5), strokewidth=0, transparency = true )
+    scatter!(axtr, trobs; markersize = 2000, color = to_color(JULIADYNAMICS_COLORS[1]), overdraw = true)
 end
-scatter!(axtr, dotobs; markersize = 4000, marker=:diamond, color = to_color(JULIADYNAMICS_COLORS[3]))
+scatter!(axtr, dotobs; markersize = 4000, marker=:diamond,
+color = to_color(JULIADYNAMICS_COLORS[3]), overdraw = true)
 axtr.azimuth = azimuth
 axtr.elevation = elevation
 
@@ -98,6 +99,7 @@ ax3D.elevation = elevation
 
 ax2 = Axis(fig[1, 3]; width = 300) # this axis has values of principal lengths
 ax2.title = "ellipsoid axes"
+tightlimits!(ax2, Bottom())
 sobs = Observable(s)
 barplot!(ax2, 1:3, sobs; color = to_color.(COLORSCHEME[1:3]))
 
