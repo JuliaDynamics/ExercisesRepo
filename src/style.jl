@@ -76,8 +76,12 @@ function add_identifiers!(fig = gcf(), axs = fig.get_axes(); xloc = 0.975, yloc 
     bbox = Dict(:boxstyle => "round,pad=0.3", :facecolor=>"white", :alpha => 1.0)
     for (i, ax) in enumerate(axs)
         l = collect('a':'z')[i]
-        ax.text(xloc, yloc, "$(l)"; transform = ax.transAxes,
-        bbox = bbox, zorder = 99, va = "top")
+        try
+            ax.text(xloc, yloc, "$(l)"; transform = ax.transAxes,
+            bbox = bbox, zorder = 99, va = "top")
+        catch err
+            @warn err
+        end
     end
 end
 

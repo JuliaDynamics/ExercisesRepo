@@ -7,8 +7,6 @@ using AbstractPlotting
 using LinearAlgebra
 using Statistics
 
-# TODO: Add rotation
-
 # Code for 3D animation
 ds = Systems.lorenz()
 u0 = trajectory(ds, 10; Ttr = 100)[end]
@@ -16,6 +14,8 @@ dt = 0.005
 N = 100
 framerate = 30
 systemtitle = "Lorenz63"
+azimuth = 2.24
+elevation = 0.38
 
 ds = Systems.towel()
 u0 = trajectory(ds, 10; Ttr = 100)[end]
@@ -23,6 +23,9 @@ dt = 1
 N = 15 # total steps to take
 framerate = 2
 systemtitle = "towelmap"
+
+elevation = 0.5
+azimuth = 6.02
 
 # %%
 tinteg = tangent_integrator(ds, 3; u0)
@@ -62,17 +65,38 @@ ellipsobs = Observable(ellipsoid)
 
 # fig = Figure(resolution = (1200, 600))
 fig = Figure(resolution = (1200, 600)); display(fig)
-ax3D = Axis3(fig[1, 1]; aspect = :data)
+# Plot trajectory
+t = Observable(0.0)
+tstr = lift(x -> systemtitle *", t = $(round(x; digits = 5))", t)
+axtr = Axis3(fig[1,1]; title = tstr, titlealign = :left)
+tr = trajectory(ds, 100N*dt, u0; dt)
+dotobs = Observable([u0])
+trobs = Observable([u0])
+if ds isa ContinuousDynamicalSystem
+    lines!(axtr, tr.data; linewidth = 0.2, color = RGBAf0(0,0,0,0.5))
+    lines!(axtr, trobs; linewidth = 4.0, color = to_color(JULIADYNAMICS_COLORS[1]))
+else
+    scatter!(axtr, tr.data; markersize = 1000, color = RGBAf0(0,0,0,0.5), strokewidth=0)
+    scatter!(axtr, trobs; markersize = 2000, color = to_color(JULIADYNAMICS_COLORS[1]))
+end
+scatter!(axtr, dotobs; markersize = 4000, marker=:diamond, color = to_color(JULIADYNAMICS_COLORS[3]))
+axtr.azimuth = azimuth
+axtr.elevation = elevation
+
+# Plot ellipsoid
+ax3D = Axis3(fig[1, 2]; aspect = :data)
 mesh!(ellipsobs, color = colors)
 
-ax3D.xticklabelsvisible = true
-ax3D.yticklabelsvisible = true
-ax3D.zticklabelsvisible = true
-ax3D.azimuth = 3.92
-ax3D.elevation = 0.38
-ax3D.title = rpad(systemtitle *", t = 0", 40, ' ')
+ax3D.xticklabelsvisible = false
+ax3D.yticklabelsvisible = false
+ax3D.zticklabelsvisible = false
+ax3D.xlabelvisible = false
+ax3D.ylabelvisible = false
+ax3D.zlabelvisible = false
+ax3D.azimuth = azimuth
+ax3D.elevation = elevation
 
-ax2 = Axis(fig[1, 2]; width = 400) # this axis has values of principal lengths
+ax2 = Axis(fig[1, 3]; width = 300) # this axis has values of principal lengths
 ax2.title = "ellipsoid axes"
 sobs = Observable(s)
 barplot!(ax2, 1:3, sobs; color = to_color.(COLORSCHEME[1:3]))
@@ -80,7 +104,6 @@ barplot!(ax2, 1:3, sobs; color = to_color.(COLORSCHEME[1:3]))
 display(fig)
 
 # %%
-t = 0
 record(
         fig, joinpath(@__DIR__, "volume_growth_$(systemtitle).mp4"), 1:N;
         framerate
@@ -94,8 +117,9 @@ record(
     # maxε = maximum(norm(u) for u in newus)
     # maxε = maximum(s)
     # ax3D.limits = map(j -> (-maxε, +maxε), (1,2,3))
-    global t = round(tinteg.t; digits = 5)
-    ax3D.title = rpad(systemtitle *", t = $(t)", 40, ' ')
-    ax3D.elevation = 0.38
-    ax3D.azimuth = 3.92
+    # Update trajectory and title and elevation
+    u = get_state(tinteg)
+    dotobs[] = [u]
+    trobs[] = push!(trobs[], u)
+    t[] = tinteg.t
 end

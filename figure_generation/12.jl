@@ -294,5 +294,3 @@ end
 add_identifiers!(fig)
 fig.tight_layout(;pad = 0.5)
 wsave(plotsdir("basin_stability"), fig)
-
-# %% phase induced transitions
