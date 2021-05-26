@@ -3,64 +3,6 @@ using DrWatson
 include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot, Random
 
-# %% permutation entropy
-using Random, Combinatorics, Statistics
-Random.seed!(356)
-o = 3
-N = 8
-x = rand(N)
-
-fig = figure(figsize = (figx, figx/3.5))
-ax1 = subplot2grid((1, 3), (0, 0))
-ax1.plot(1:N, x, marker = "o", color = "C0", mfc = "C1", ms = 15, zorder = 99)
-ax1.set_title("timeseries", size = 28)
-ax1.spines["bottom"].set_position("center")
-ax1.spines["right"].set_color("none")
-ax1.spines["top"].set_color("none")
-ax1.set_xticks([])
-ax1.set_yticks([])
-ax1.set_xlabel("\$t\$")
-ax1.set_ylabel("\$x\$", rotation = 0)
-ax1.xaxis.set_label_coords(1.0, 0.5)
-ax1.yaxis.set_label_coords(-0.05, 0.9)
-ax1.set_ylim(-0.1, 1.1)
-# ax1.axis("off")
-
-# add pattern indications
-for (s, n) in zip(("2", "3", "3"), (2, 4, 6))
-    xs = [n, n, n+o-1, n+o-1]
-    ym = minimum(x[xs[1]:xs[end]]) - 0.1
-    yd = ym - 0.02
-    ys = [ym, yd, yd, ym] #.+ 0.05
-    ax1.plot(xs, ys, color = "k", lw = 1)
-    ax1.text(mean(xs), minimum(ys)-0.02, "#=$s", ha="center", va = "top")
-end
-
-# ax1.annotate("4", (2, -0.2), xytext = (4, -0.2), ha="center")
-
-ax2 = subplot2grid((1, 3), (0, 1), colspan = 2)
-p = permutations([0, 0.5, 1], o) |> collect
-counts = [0, 1, 3, 1, 0, 1]
-for (i, a) in enumerate(p)
-    ax2.plot((1:o) .+ i*o .+ 1, a, marker = "o",
-    color = "C0", mfc = "C2", ms = 10)
-    ax2.text(o÷2 + i*o + 1, 1.2, "$i")
-    ax2.text(o÷2 + i*o + 1, -0.5, "$(counts[i])")
-end
-ax2.text(o+1, 1.2, "#", ha = "right")
-ax2.text(o+1, 0.5, "pattern", ha = "right")
-ax2.text(o+1, -0.5, "count", ha = "right")
-ax2.set_ylim(-1, 1.5)
-ax2.set_xlim(0, ax2.get_xlim()[2])
-ax2.set_title("relative amplitude permutations, \$d=$o\$", size = 28)
-ax2.axis("off")
-
-fig.tight_layout()
-fig.subplots_adjust(top = 0.9, bottom = 0.02, right = 0.95, left = 0.05, wspace=0.1, hspace = 0.1)
-
-# fsave(joinpath(figdir, "permentropy"), fig)
-
-
 # %% Koch snowflake
 linepoints = SVector{2}.([[0.0; 0.0], [1.0; 0.0]])
 flakepoints = SVector{2}.([[0.0; 0.0], [0.5; sqrt(3)/2], [1; 0.0], [0.0; 0.0]])
@@ -179,7 +121,7 @@ end
 
 fig.tight_layout()
 fig.subplots_adjust(top = 0.98, bottom = 0.05, right = 0.95, left = 0.05, wspace=0.1, hspace = 0.1)
-# fig.savefig(joinpath(figdir, "henon_zoom.png"))
+# wsave(plotsdir("henon_zoom"), fig)
 
 
 # %% dimension: Entropy and correlation
@@ -323,110 +265,55 @@ wsave(plotsdir("fractaldim_noise"), fig)
 
 # %% Magnetic pendulum
 using LinearAlgebra
-ma = Systems.magnetic_pendulum(α=0.2, ω=1.0, d=0.3)
-∫ = integrator(ma)
 
-g = range(-5, 5; length = 1500)
-c = fill(0, length(g), length(g))
-t = similar(c, Float64)
-@show length(c)
+α=0.2; ω=1.0; d=0.3
+gx = gy = range(-5, 5; length = 1500)
+config = @strdict(α, ω, d, gx, gy)
 
-for (i, x) ∈ enumerate(g)
-    @show x
-    for (j, y) in enumerate(g)
-    reinit!(∫, SVector(x, y, 0, 0))
-    t0 = ∫.t0
-    step!(∫, 100.0)
-    while ∫.u[3]^2 + ∫.u[4]^2 > 1e-3
-        step!(∫)
-    end
-    s = SVector(∫.u[1], ∫.u[2])
-    k = findmin([(s-m)⋅(s-m) for m in ma.f.magnets])[2]
-    # scatter(x, y, color = "C$(k-1)", s = 1)
-    t[i,j] = ∫.t - ∫.t0
-    c[i,j] = k
-    # break
-end
+function magnetic_basins(config)
+    @unpack α, ω, d, gx, gy = config
+    ma = Systems.magnetic_pendulum(; α, ω, d)
+    @time basins, attractors = basins_general(gx, gy, ma; idxs = 1:2)
+    return @strdict(gx, gy, basins, attractors)
 end
 
-cd(@__DIR__)
-using FileIO
-save("magneticpendulum.bson", Dict(:c => c, :g => g, :t => t))
+# produce high quality
+produce_or_load(datadir(), config, magnetic_basins; prefix = "magnetic_basins")
 
-# %% Magnetic pendulum zoomed
-using LinearAlgebra
-ma = Systems.magnetic_pendulum(α=0.2, ω=1.0, d=0.3)
-∫ = integrator(ma)
-
+# produce zoomed version
 gx = range(1.80, 1.95; length = 1000)
 gy = range(0, 0.12; length = 1000)
-c = fill(0, length(gx), length(gy))
-t = similar(c, Float64)
-@show length(c)
+config = @strdict(α, ω, d, gx, gy)
+produce_or_load(datadir(), config, magnetic_basins; prefix = "magnetic_basins_zoomed")
 
-for (i, x) ∈ enumerate(gx)
-    @show x
-    for (j, y) in enumerate(gy)
-        reinit!(∫, SVector(x, y, 0, 0))
-        t0 = ∫.t0
-        step!(∫, 100.0)
-        while ∫.u[3]^2 + ∫.u[4]^2 > 1e-3
-            step!(∫)
-        end
-        s = SVector(∫.u[1], ∫.u[2])
-        k = findmin([(s-m)⋅(s-m) for m in ma.f.magnets])[2]
-        # scatter(x, y, color = "C$(k-1)", s = 1)
-        t[i,j] = ∫.t - ∫.t0
-        c[i,j] = k
-        # break
-    end
-end
-
-cd(@__DIR__)
-using FileIO
-save("magneticpendulum_zoom.bson", Dict(:c => c, :gx => gx, :gy => gy, :t => t))
-
-
-# %% Plot this
-ma = Systems.magnetic_pendulum(α=0.2, ω=1.0, d=0.3)
-
-cd(@__DIR__)
-using FileIO
-a = load("magneticpendulum.bson")
-g = a[:g]; c = a[:c]
+# Plot this
+gx, gy, basins, attractors = @unpack wload(datadir(savename("magnetic_basins", config)))
 
 LC =  matplotlib.colors.ListedColormap
 cmap = LC([matplotlib.colors.to_rgb("C$k") for k in 0:2])
 
-fig = figure(figsize=(figx/2, figx/2))
-pcolormesh(g, g, c'; cmap = cmap, shading = "gouraud")
+fig = figure(figsize=(figx/2, figy))
+pcolormesh(gx, gy, basins'; cmap, shading = "gouraud")
 gca().set_aspect("equal")
 xticks([-5, 5])
 yticks([-5, 5])
 xlabel("\$x\$", labelpad=-30)
 ylabel("\$y\$", labelpad=-30)
-for m in ma.f.magnets
-    scatter(m[1], m[2]; color = "white", edgecolor = "black", zorder = 99, s = 100)
+for m in attractors
+    m1, m2 = columns(m)
+    scatter(m1, m2; color = "white", edgecolor = "black", zorder = 99, s = 100)
 end
-tight_layout()
+tight_layout(pad=0.3)
 subplots_adjust(bottom = 0.1, top = 0.95)
+wsave(plotsdir("magneticpendulum"), fig)
 
-
-# plot rando initial condition
-# tr = trajectory(ma, 10000, [-1.91228, -3.59712, 0, 0]; dt = 0.1)
-# x, y = columns(tr)
-# plot(x, y, "C3", lw = 1, alpha = 0.5, zorder = 1)
-fsave(joinpath(figdir, "magneticpendulum"), fig)
-
-
-az = load("magneticpendulum_zoom.bson")
-gx = az[:gx]; gy = az[:gy]; c = az[:c]
-
+# Plot zoomed version
+gx, gy, basins, attractors = @unpack wload(datadir(savename("magnetic_basins_zoomed", config)))
 LC =  matplotlib.colors.ListedColormap
 cmap = LC([matplotlib.colors.to_rgb("C$k") for k in 0:2])
 
 fig = figure(figsize=(figx/2, figx/2))
-pcolormesh(gx, gy, c'; cmap = cmap, shading = "gouraud")
+pcolormesh(gx, gy, basins'; cmap, shading = "gouraud")
 gca().set_aspect("equal")
 
 xticks([1.8, 1.95], size = 20)

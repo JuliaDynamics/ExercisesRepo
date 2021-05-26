@@ -169,66 +169,18 @@ fig.tight_layout(pad = 0.25)
 wsave(plotsdir("rate_dependent"), fig)
 
 # %% Basin stability of magnetic pendulum
-using DynamicalSystems, PyPlot, LinearAlgebra, Statistics
-
-struct MagneticPendulum{T<:AbstractFloat}
-    magnets::Vector{SVector{2, T}}
-end
-
-function (m::MagneticPendulum)(u, p, t)
-    x, y, vx, vy = u
-    γ1, γ2, γ3, d, α, ω = p
-    γ = (γ1, γ2, γ3)
-    dx, dy = vx, vy
-    dvx, dvy = @. -ω^2*(x, y) - α*(vx, vy)
-    for (i, ma) in enumerate(m.magnets)
-        δx, δy = (x - ma[1]), (y - ma[2])
-        D = sqrt(δx^2 + δy^2 + d^2)
-        dvx -= γ[i]*(x - ma[1])/D^3
-        dvy -= γ[i]*(y - ma[2])/D^3
-    end
-    return SVector(dx, dy, dvx, dvy)
-end
-
-p0 = [1, 1, 0.2, 0.3, 0.2, 0.5]
+using DynamicalSystems, PyPlot, Statistics
+d, α, ω = 0.3, 0.2, 0.5
 u0 = [sincos(0.12553*2π)..., 0, 0]
-m = MagneticPendulum([SVector(cos(2π*i/3), sin(2π*i/3)) for i in 1:3])
-ma = ContinuousDynamicalSystem(m, u0, p0)
+xg = yg = range(-3, 3, length = 300)
+ma = Systems.magnetic_pendulum(;γs=[1,1,0.2], d, α, ω)
 
-using LinearAlgebra
-
-const xmin, xmax = -3, 3
-
-function high_quality_statespace(ma, g = range(xmin, xmax; length = 200))
-    ∫ = integrator(ma)
-
-    c = fill(0, length(g), length(g))
-    t = similar(c, Float64)
-
-    for (i, x) ∈ enumerate(g)
-        # @show x
-        for (j, y) in enumerate(g)
-            reinit!(∫, SVector(x, y, 0, 0))
-            t0 = ∫.t0
-            step!(∫, 100.0)
-            while ∫.u[3]^2 + ∫.u[4]^2 > 1e-3
-                step!(∫)
-            end
-            s = SVector(∫.u[1], ∫.u[2])
-            dmin, k = findmin([(s-m)⋅(s-m) for m in ma.f.magnets])
-            # t[i,j] = ∫.t - ∫.t0
-            c[i,j] = k
-            # break
-        end
-    end
-    return c
-end
-
-function random_statespace_fraction(∫, T = 10000)
+# This function is faster than basins, because it only picks some random points
+function random_statespace_fraction(∫, xg, yg, T = 10000)
     c = 0 # count of states converged to attractor of interest
     for i in 1:T
-        x = rand()*(xmax-xmin) + xmin
-        y = rand()*(xmax-xmin) + xmin
+        x = rand()*(maximum(xg)-minimum(xg)) + minimum(xg)
+        y = rand()*(maximum(yg)-minimum(yg)) + minimum(yg)
         reinit!(∫, SVector(x, y, 0, 0))
         step!(∫, 100.0)
         while ∫.u[3]^2 + ∫.u[4]^2 > 1e-3
@@ -236,11 +188,10 @@ function random_statespace_fraction(∫, T = 10000)
         end
         s = SVector(∫.u[1], ∫.u[2])
         dmin, k = findmin([(s-m)⋅(s-m) for m in ma.f.magnets])
-        k == 3 && (c += 1)
+        if k == 3; c += 1; end
     end
     return c/T
 end
-
 
 γs = 0:0.01:1
 Fs = zero(γs)
@@ -248,20 +199,21 @@ Fσs = zero(γs)
 λs = zero(γs)
 ∫ = integrator(ma)
 
+using LinearAlgebra
 for (i, γ) in enumerate(γs)
     @show (i, γ)
-    p0[3] = γ
-    allfracs = [random_statespace_fraction(∫, 1000) for i in 1:10]
+    ∫.p.γs[3] = γ
+    allfracs = [random_statespace_fraction(∫, xg, yg, 1000) for i in 1:10]
     Fs[i] = mean(allfracs)
     Fσs[i] = std(allfracs)
-    J = Array(ma.jacobian(SVector(m.magnets[3]..., 0, 0), p0, 0))
+    J = Array(ma.jacobian(SVector(ma.f.magnets[3]..., 0, 0), ma.p, 0))
     eee = eigvals(J)
     λs[i] = maximum(real.(eee))
 end
 
 
 # %%
-fig, axs = subplots(1,3; figsize = (figx, figy))
+fig, axs = subplots(1, 3)
 axs[1].plot(γs, Fs; label = "\$F\$")
 axs[1].fill_between(γs, Fs .- Fσs, Fs .+ Fσs; color = "C0", alpha = 0.5)
 # axs[1].errorbar(γs, Fs; label = "\$F\$", yerr = Fσs)
@@ -278,17 +230,13 @@ LC =  matplotlib.colors.ListedColormap
 cmap = LC([matplotlib.colors.to_rgb("C$k") for k in 0:2])
 γplots = (0.7, 0.25)
 for (i, γ) in enumerate(γplots)
-    p0[3] = γ
-    g = range(xmin, xmax; length = 1000)
-    c = high_quality_statespace(ma, g)
-    axs[i+1].pcolormesh(g, g, c'; cmap = cmap, shading = "gouraud")
-end
-
-for i in 2:3;
-    axs[i].set_xlabel("\$x\$")
-    axs[i].set_ylabel("\$y\$")
-    axs[i].set_xticks([])
-    axs[i].set_yticks([])
+    ma.p.γs[3] = γ
+    basins, attractors = basins_general(xg, yg, ma)
+    axs[i+1].pcolormesh(xg, xg, basins'; cmap, shading = "gouraud")
+    axs[i+1].set_xlabel("\$x\$")
+    axs[i+1].set_ylabel("\$y\$")
+    axs[i+1].set_xticks([])
+    axs[i+1].set_yticks([])
 end
 
 add_identifiers!(fig)
