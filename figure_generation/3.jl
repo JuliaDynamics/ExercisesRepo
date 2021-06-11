@@ -1,56 +1,11 @@
 using DrWatson
 @quickactivate "ExercisesRepo"
 include(srcdir("style.jl"))
-
-# %% sensitive dependence
 using DynamicalSystems, PyPlot, Random
-Random.seed!(5)
-close("all")
-fig = figure(figsize=(figx/2, figy))
-ax = gca()
-u0 = [10,10.0,10]
-lo = Systems.lorenz([10,10.0,10])
-
-for i in 1:3
-    u = u0 .+ i*1e-3
-    tr = trajectory(lo, 15, u)
-    plot(0:0.01:15, tr[:, 1],  c = COLORS[[2,3,1][i]])
-end
-
-xlabel("\$t\$",labelpad = -10)
-yticks(-15:10:15)
-xticks(0:5:15)
-ylabel("\$x\$",labelpad = -20)
-tight_layout(pad = 0.25)
-subplots_adjust(bottom = 0.15, left = 0.12)
-wsave(plotsdir("sensitive"), fig)
-
-# %% definition of lyapunov
-using LinearAlgebra
-lo = Systems.lorenz([20,20,20.0])
-X₁ = trajectory(lo, 45)
-u₂ = get_state(lo) .+ 1e-6
-X₂ = trajectory(lo, 45, u₂)
-δ  = norm.(X₂.data .- X₁.data)
-λ = lyapunov(lo, 100000)
-
-fig = figure(figsize=(figx/2,figy/2))
-ax = gca()
-ax.plot(0:0.01:45, log.(δ), c = COLORS[1], label ="\$\\ln(\\delta(t)))\$")
-ax.set_yticks(-12:4:4)
-ax.set_xlabel("\$t\$", labelpad=-20)
-# Lyapunov
-ax.plot([0, 15] .+ 4, λ .* [0, 15] .- 13, color = COLORS[2])
-ax.text(12, -9, "\$\\lambda\$=$(round(λ;digits=2))", color = COLORS[2])
-ax.legend(;handlelength = 1.0)
-xticks(0:15:45)
-tight_layout(pad = 0.25)
-subplots_adjust(bottom = 0.22, left = 0.12)
-wsave(plotsdir("lyapunov"), fig)
 
 # %% Folding in henon map
 a = 1.4; b = 0.3
-he = Systems.henon(;a=a, b=b)
+he = Systems.henon(; a, b)
 close("all")
 fig = figure()
 

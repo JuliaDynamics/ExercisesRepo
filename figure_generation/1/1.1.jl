@@ -3,7 +3,7 @@ using DrWatson
 include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot, Random
 
-# %% phase space plots
+# phase space plots
 fig = figure(figsize = (figx, figx/2))
 
 ax = subplot(231)

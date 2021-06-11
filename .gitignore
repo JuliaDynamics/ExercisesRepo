@@ -1,3 +1,5 @@
+# Will reenable manifest later
+Manifest.toml
 ################################################################################
 #                              Book Specific Stuff                             #
 ################################################################################
@@ -9,10 +11,9 @@ todo
 courses
 lectures
 *.pptx
-# Will reenable manifest later
-Manifest.toml
 solutions
 *.docx
+reviews
 
 ################################################################################
 #                          DrWatson Project Structure                          #
